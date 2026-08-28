@@ -1,8 +1,16 @@
 import time
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://127.0.0.1:5500"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
@@ -22,10 +30,10 @@ class Action(BaseModel):
     selector: str | None = None
     direction: str | None = None
 
-
 class Metrics(BaseModel):
     processing_time_ms: float
-
+    allowed_actions: int
+    confirmation_required: int
 
 class AnalyzeResponse(BaseModel):
     actions: list[Action]
@@ -104,10 +112,26 @@ def analyze(request: AnalyzeRequest):
 
             action["safety"] = "requires_confirmation"
             validated_actions.append(action)
+
+        else:
+
+            # Unknown actions are rejected
+            continue
     processing_time_ms = (time.perf_counter() - start_time) * 1000
+    allowed_count = sum(
+        1 for action in validated_actions
+        if action["safety"] == "allowed"
+    )
+
+    confirmation_count = sum(
+        1 for action in validated_actions
+        if action["safety"] == "requires_confirmation"
+    )
     return {
         "actions": validated_actions,
         "metrics": {
-            "processing_time_ms": round(processing_time_ms, 2)
+            "processing_time_ms": round(processing_time_ms, 2),
+            "allowed_actions": allowed_count,
+            "confirmation_required": confirmation_count
         }
     }
