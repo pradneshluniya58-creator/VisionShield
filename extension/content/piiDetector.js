@@ -377,7 +377,10 @@ function getAddressScore(element) {
 
 function detectPIIFromDOM(){
     const detections = [];
-    document.querySelectorAll("input").forEach(element=>{
+    document.querySelectorAll("input , textarea").forEach(element=>{
+
+        if(element.type === "hidden") return;
+
         const emailresult = getEmailScore(element);
         const passwordresult = getPasswordScore(element);
         const phoneresult = getPhoneScore(element);
