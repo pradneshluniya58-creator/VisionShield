@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>VisionShield Demo Application</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff,
+            #f8fafc
+        );
+
+    color: #182033;
+}
+
+.container {
+
+    width: 760px;
+
+    max-width: 92%;
+
+    margin: 40px auto;
+
+    background: white;
+
+    padding: 35px;
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 20px 60px
+        rgba(20, 30, 60, 0.12);
+}
+
+.header {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    margin-bottom: 30px;
+}
+
+.logo {
+
+    width: 55px;
+
+    height: 55px;
+
+    border-radius: 16px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 26px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6c63ff,
+            #00bfff
+        );
+
+    color: white;
+}
+
+h1 {
+
+    margin: 0;
+
+    font-size: 28px;
+}
+
+.subtitle {
+
+    color: #737b8f;
+
+    margin-top: 6px;
+
+    font-size: 14px;
+}
+
+.section {
+
+    margin-top: 25px;
+
+    padding: 22px;
+
+    border-radius: 16px;
+
+    background: #f8f9fd;
+
+    border: 1px solid #e5e8f0;
+}
+
+.section h2 {
+
+    margin-top: 0;
+
+    font-size: 17px;
+}
+
+label {
+
+    display: block;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    margin-bottom: 7px;
+
+}
+
+input,
+textarea,
+select {
+
+    width: 100%;
+
+    padding: 13px;
+
+    border: 1px solid #d9deea;
+
+    border-radius: 10px;
+
+    margin-bottom: 17px;
+
+    font-size: 14px;
+
+    outline: none;
+}
+
+input:focus,
+textarea:focus {
+
+    border-color: #6c63ff;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(108,99,255,.1);
+}
+
+button {
+
+    width: 100%;
+
+    padding: 15px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #6c63ff,
+            #238dff
+        );
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.note {
+
+    margin-top: 18px;
+
+    padding: 13px;
+
+    border-radius: 10px;
+
+    background: #fff7e6;
+
+    color: #805d00;
+
+    font-size: 12px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <div class="logo">
+            🛡️
+        </div>
+
+        <div>
+
+            <h1>
+                Job Application
+            </h1>
+
+            <div class="subtitle">
+                PrivyPilot Privacy Demo
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="section">
+
+        <h2>
+            Personal Information
+        </h2>
+
+        <label for="fullName">
+            Full Name
+        </label>
+
+        <input
+            id="fullName"
+            name="fullName"
+            type="text"
+            placeholder="Enter your full name"
+            value="Rahul Sharma"
+        >
+
+
+        <label for="email">
+            Email Address
+        </label>
+
+        <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Enter your email"
+            value="rahul@example.com"
+        >
+
+
+        <label for="phone">
+            Phone Number
+        </label>
+
+        <input
+            id="phone"
+            name="phone"
+            type="tel"
+            placeholder="Enter mobile number"
+            value="9876543210"
+        >
+
+
+        <label for="address">
+            Address
+        </label>
+
+        <textarea
+            id="address"
+            name="address"
+            placeholder="Enter your address"
+        >Pune, Maharashtra</textarea>
+
+
+        <label for="pan">
+            PAN / Dummy ID
+        </label>
+
+        <input
+            id="pan"
+            name="pan"
+            type="text"
+            placeholder="Enter PAN or ID"
+            value="ABCDE1234F"
+        >
+
+
+        <label for="password">
+            Password
+        </label>
+
+        <input
+            id="password"
+            name="password"
+            type="password"
+            value="VisionShield123"
+        >
+
+    </div>
+
+
+    <div class="section">
+
+        <h2>
+            Non-Sensitive Information
+        </h2>
+
+        <label for="education">
+            Education
+        </label>
+
+        <input
+            id="education"
+            name="education"
+            type="text"
+            value="B.Tech Computer Engineering"
+        >
+
+
+        <label for="experience">
+            Experience
+        </label>
+
+        <input
+            id="experience"
+            name="experience"
+            type="text"
+            value="2 Years"
+        >
+
+    </div>
+
+
+    <div class="note">
+
+        🔐 This page intentionally contains dummy
+        sensitive information for the PrivyPilot demo.
+
+    </div>
+
+
+    <br>
+
+    <button>
+        Submit Application
+    </button>
+
+</div>
+
+</body>
+
+</html>

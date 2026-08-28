@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VisionShield</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 390px;
+            min-height: 560px;
+            font-family: Inter, Arial, sans-serif;
+            background: #080b14;
+            color: #ffffff;
+        }
+
+        .app {
+            padding: 20px;
+        }
+
+        /* HEADER */
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #6c63ff, #00c6ff);
+            font-size: 21px;
+            box-shadow: 0 8px 25px rgba(70, 130, 255, 0.25);
+        }
+
+        .brand h1 {
+            font-size: 20px;
+            font-weight: 750;
+            letter-spacing: -0.5px;
+        }
+
+        .brand p {
+            color: #8d96aa;
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
+        .status-dot {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #8d96aa;
+            font-size: 11px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #35e59b;
+            box-shadow: 0 0 10px #35e59b;
+        }
+
+        /* HERO */
+
+        .hero {
+            border: 1px solid #22283a;
+            border-radius: 20px;
+            padding: 20px;
+            background: linear-gradient(
+                145deg,
+                rgba(45, 51, 85, 0.55),
+                rgba(14, 18, 31, 0.9)
+            );
+            margin-bottom: 15px;
+        }
+
+        .hero-label {
+            color: #9aa4bb;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+
+        .hero h2 {
+            font-size: 24px;
+            line-height: 1.15;
+            margin-bottom: 9px;
+        }
+
+        .hero p {
+            color: #9da6ba;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        /* START BUTTON */
+
+        .start-btn {
+            width: 100%;
+            border: none;
+            border-radius: 14px;
+            padding: 15px;
+            margin-top: 17px;
+            cursor: pointer;
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #675cf6, #238dff);
+            box-shadow: 0 10px 25px rgba(67, 105, 255, 0.28);
+            transition: 0.2s ease;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 13px 30px rgba(67, 105, 255, 0.4);
+        }
+
+        .start-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* PRIVACY CARD */
+
+        .privacy-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 15px;
+            border: 1px solid #202638;
+            background: #101522;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+
+        .privacy-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .shield {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(53, 229, 155, 0.1);
+            font-size: 17px;
+        }
+
+        .privacy-title {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .privacy-sub {
+            color: #747e93;
+            font-size: 10px;
+            margin-top: 3px;
+        }
+
+        .verified {
+            color: #35e59b;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        /* STATS */
+
+        .section-title {
+            color: #777f94;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+            margin: 18px 0 10px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .stat {
+            background: #101522;
+            border: 1px solid #202638;
+            border-radius: 14px;
+            padding: 14px 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 21px;
+            font-weight: 750;
+        }
+
+        .stat-label {
+            color: #727c91;
+            font-size: 9px;
+            margin-top: 5px;
+        }
+
+        /* DETECTION LIST */
+
+        .detection-box {
+            border: 1px solid #202638;
+            background: #101522;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .detection {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            border-bottom: 1px solid #1e2433;
+        }
+
+        .detection:last-child {
+            border-bottom: none;
+        }
+
+        .detection-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .detection-icon {
+            width: 27px;
+            height: 27px;
+            border-radius: 8px;
+            background: #191f2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .detection-name {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .detection-status {
+            color: #35e59b;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        /* FOOTER */
+
+        .footer {
+            text-align: center;
+            color: #4e5669;
+            font-size: 9px;
+            margin-top: 18px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .scanning {
+            animation: pulse 1.2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="header">
+
+        <div class="brand">
+
+            <div class="logo">
+                🛡️
+            </div>
+
+            <div>
+                <h1>VisionShield</h1>
+                <p>Privacy-preserving browser agent</p>
+            </div>
+
+        </div>
+
+        <div class="status-dot">
+            <span class="dot"></span>
+            Ready
+        </div>
+
+    </div>
+
+
+    <div class="hero">
+
+        <div class="hero-label">
+            AI Privacy Shield
+        </div>
+
+        <h2>
+            Browse safely.<br>
+            Keep your data private.
+        </h2>
+
+        <p>
+            VisionShield detects sensitive information on the
+            current webpage before it can leave your device.
+        </p>
+
+        <button class="start-btn" id="startBtn">
+            🚀 &nbsp; Start VisionShield
+        </button>
+
+    </div>
+
+
+    <div class="privacy-card">
+
+        <div class="privacy-left">
+
+            <div class="shield">
+                🛡️
+            </div>
+
+            <div>
+                <div class="privacy-title">
+                    Vision Shield
+                </div>
+
+                <div class="privacy-sub">
+                    Local PII detection enabled
+                </div>
+            </div>
+
+        </div>
+
+        <div class="verified" id="privacyStatus">
+            READY
+        </div>
+
+    </div>
+
+
+    <div class="section-title">
+        Privacy Metrics
+    </div>
+
+    <div class="stats">
+
+        <div class="stat">
+            <div class="stat-number" id="detectedCount">
+                0
+            </div>
+
+            <div class="stat-label">
+                PII DETECTED
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number" id="redactedCount">
+                0
+            </div>
+
+            <div class="stat-label">
+                REDACTED
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number">
+                0
+            </div>
+
+            <div class="stat-label">
+                RAW UPLOAD
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="section-title">
+        Detection Results
+    </div>
+
+    <div class="detection-box" id="results">
+
+        <div class="detection">
+
+            <div class="detection-left">
+
+                <div class="detection-icon">
+                    🔍
+                </div>
+
+                <div class="detection-name">
+                    Waiting for scan...
+                </div>
+
+            </div>
+
+            <div class="detection-status">
+                —
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+        VisionShield • Privacy by Design • SH 2026
+    </div>
+
+</div>
+
+<script src="popup.js"></script>
+
+</body>
+</html>
