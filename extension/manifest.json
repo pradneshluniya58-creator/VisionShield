@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "VisionShield",
+  "version": "1.0.0",
+  "description": "Privacy-preserving browser agent for detecting and protecting sensitive information.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
+  "action": {
+    "default_title": "PrivyPilot",
+    "default_popup": "popup/popup.html"
+  },
+  "background": {
+    "service_worker": "background/background.js"
+  }
+}
