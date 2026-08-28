@@ -5,23 +5,83 @@ const redactedCount = document.getElementById("redactedCount");
 const privacyStatus = document.getElementById("privacyStatus");
 const results = document.getElementById("results");
 
+
+// Screenshot preview elements
+const screenshotPreview =
+    document.getElementById("screenshotPreview");
+
+const screenshotStatus =
+    document.getElementById("screenshotStatus");
+    
 startBtn.addEventListener("click", async () => {
 
-    startBtn.textContent = "⏳  Scanning page...";
+    startBtn.textContent = "⏳  Capturing page...";
     startBtn.classList.add("scanning");
 
-    privacyStatus.textContent = "SCANNING";
+    privacyStatus.textContent = "CAPTURING";
+
 
     try {
 
+        // Get active browser tab
         const [tab] = await chrome.tabs.query({
             active: true,
             currentWindow: true
         });
 
+
         if (!tab || !tab.id) {
             throw new Error("No active tab found");
         }
+
+
+        // =====================================================
+        // STEP 1: CAPTURE SCREENSHOT
+        // =====================================================
+
+        screenshotStatus.textContent =
+            "Capturing screenshot...";
+
+
+        const screenshotResponse =
+            await chrome.runtime.sendMessage({
+                action: "CAPTURE_SCREENSHOT",
+                windowId: tab.windowId
+            });
+
+
+        // Check screenshot response
+        if (!screenshotResponse ||
+            !screenshotResponse.success) {
+
+            throw new Error(
+                screenshotResponse?.error ||
+                "Unable to capture screenshot"
+            );
+
+        }
+
+
+        // Display screenshot
+        screenshotPreview.src =
+            screenshotResponse.dataUrl;
+
+        screenshotPreview.classList.remove("hidden");
+
+        screenshotStatus.textContent =
+            "Screenshot captured";
+
+
+        // =====================================================
+        // STEP 2: RUN EXISTING PII DETECTION
+        // =====================================================
+
+        startBtn.textContent =
+            "⏳  Scanning page...";
+
+        privacyStatus.textContent =
+            "SCANNING";
+
 
         await chrome.scripting.executeScript({
             target: {
@@ -34,39 +94,63 @@ startBtn.addEventListener("click", async () => {
             ]
         });
 
-        const response = await chrome.tabs.sendMessage(
-            tab.id,
-            {
-                action: "START_VisionShield"
-            }
-        );
 
+        // Send request to content script
+        const response =
+            await chrome.tabs.sendMessage(
+                tab.id,
+                {
+                    action: "START_VisionShield"
+                }
+            );
+
+
+        // Display PII results
         displayResults(response);
+
 
     } catch (error) {
 
         console.error(error);
 
-        privacyStatus.textContent = "ERROR";
+        privacyStatus.textContent =
+            "ERROR";
+
+
+        screenshotStatus.textContent =
+            "Screenshot failed";
+
 
         results.innerHTML = `
             <div class="detection">
+
                 <div class="detection-left">
-                    <div class="detection-icon">⚠️</div>
+
+                    <div class="detection-icon">
+                        ⚠️
+                    </div>
+
                     <div class="detection-name">
                         Unable to scan this page
                     </div>
+
                 </div>
 
                 <div class="detection-status">
                     ERROR
                 </div>
+
             </div>
         `;
+
     }
 
-    startBtn.textContent = "🔄  Scan Again";
+
+    startBtn.textContent =
+        "🔄  Scan Again";
+
     startBtn.classList.remove("scanning");
+
 });
 
 
