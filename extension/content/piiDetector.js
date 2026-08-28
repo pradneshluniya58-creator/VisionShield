@@ -470,3 +470,6 @@ const detections = detectPIIFromDOM();
 console.log(detections);
 
 highlightPII(detections);
+
+
+//It is pii detector code
