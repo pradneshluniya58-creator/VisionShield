@@ -57,11 +57,21 @@ CONFIRMATION_ACTIONS = {
 @app.post("/analyze", response_model=AnalyzeResponse)
 def analyze(request: AnalyzeRequest):
     start_time = time.perf_counter()
+
     if request.privacy_manifest.get("raw_pii_uploaded", False):
+        processing_time_ms = (time.perf_counter() - start_time) * 1000
+
         return {
             "actions": [],
-            "error": "Raw PII upload is not allowed"
+            "metrics": {
+                "processing_time_ms": round(processing_time_ms, 2),
+                "allowed_actions": 0,
+                "confirmation_required": 0
+            }
         }
+
+    # Mock reasoning for now
+    task = request.task.lower()
 
     # Mock reasoning for now
     task = request.task.lower()
