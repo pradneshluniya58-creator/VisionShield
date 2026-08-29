@@ -37,7 +37,8 @@ class Metrics(BaseModel):
 
 class AnalyzeResponse(BaseModel):
     actions: list[Action]
-    metrics: Metrics
+    metrics: Metrics | None = None
+    error: str | None = None
 
 
 ALLOWED_ACTIONS = {
