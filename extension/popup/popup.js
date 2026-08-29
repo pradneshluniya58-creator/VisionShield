@@ -1,3 +1,14 @@
+const visionWorker = new Worker(
+    chrome.runtime.getURL(
+        "vision/worker.bundle.js"
+    ),
+    {
+        type: "module"
+    }
+);
+
+console.log("Vision worker created successfully");
+
 const startBtn = document.getElementById("startBtn");
 
 const detectedCount = document.getElementById("detectedCount");
@@ -5,6 +16,61 @@ const redactedCount = document.getElementById("redactedCount");
 const privacyStatus = document.getElementById("privacyStatus");
 const results = document.getElementById("results");
 
+// ---------------------------------------------------------
+// Local Vision Worker
+// ---------------------------------------------------------
+
+
+
+visionWorker.addEventListener(
+    "message",
+    (event) => {
+
+        const data = event.data;
+
+        if (data.type === "STATUS") {
+
+            console.log(
+                "[Vision Worker]",
+                data.message
+            );
+
+            return;
+        }
+
+        if (data.type === "ERROR") {
+
+            console.error(
+                "[Vision Worker ERROR]",
+                data.message
+            );
+
+            return;
+        }
+
+        if (data.type === "RESULT") {
+
+            console.log(
+                "Local vision result:",
+                data.output
+            );
+
+            if (
+                data.output &&
+                data.output.length > 0
+            ) {
+
+                console.log(
+                    "Top visual prediction:",
+                    data.output[0].label,
+                    data.output[0].score
+                );
+
+            }
+        }
+
+    }
+);
 
 // Screenshot preview elements
 const screenshotPreview =
@@ -48,6 +114,7 @@ startBtn.addEventListener("click", async () => {
                 action: "CAPTURE_SCREENSHOT",
                 windowId: tab.windowId
             });
+            console.log("STEP B: screenshot response received", screenshotResponse);
 
 
         // Check screenshot response
@@ -65,11 +132,51 @@ startBtn.addEventListener("click", async () => {
         // Display screenshot
         screenshotPreview.src =
             screenshotResponse.dataUrl;
+            console.log("STEP C: screenshot displayed");
+
+            // ---------------------------------------------------------
+// Send Point 4 screenshot to local vision worker
+// ---------------------------------------------------------
+console.log("STEP: About to convert screenshot");
+const imageResponse =
+    await fetch(
+        screenshotResponse.dataUrl
+    );
+
+const imageBlob =
+    await imageResponse.blob();
+
+const imageBuffer =
+    await imageBlob.arrayBuffer();
+    
+
+console.log(
+    "Sending screenshot to vision worker..."
+);
+
+visionWorker.postMessage(
+    {
+        type: "RUN_VISION",
+        imageBuffer: imageBuffer,
+        mimeType: imageBlob.type || "image/png"
+    },
+    [
+        imageBuffer
+    ]
+);
+            // ---------------------------------------------------------
+// Send Point 4 screenshot to local vision worker
+// ---------------------------------------------------------
+
+
+
 
         screenshotPreview.classList.remove("hidden");
 
         screenshotStatus.textContent =
             "Screenshot captured";
+
+            console.log("STEP A: screenshot capture started");
 
 
         // =====================================================

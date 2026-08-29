@@ -41,3 +41,5 @@ models/
 *.onnx
 *.bin
 *.safetensors
+
+extension/vision/worker.bundle.js

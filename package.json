@@ -1,0 +1,25 @@
+{
+  "name": "visionshield",
+  "version": "1.0.0",
+  "description": "SIH 2026 ps 171",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pradneshluniya58-creator/VisionShield.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/pradneshluniya58-creator/VisionShield/issues"
+  },
+  "homepage": "https://github.com/pradneshluniya58-creator/VisionShield#readme",
+  "dependencies": {
+    "@huggingface/transformers": "^4.2.0",
+    "esbuild": "^0.28.2"
+  }
+}
