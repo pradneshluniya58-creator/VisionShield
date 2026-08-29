@@ -72,36 +72,7 @@ chrome.runtime.onMessage.addListener(
             console.log(
                 `PII redacted: ${cleanResults.length}`
             );
-const backendResponse = await fetch(
-    "http://127.0.0.1:8000/analyze",
-    {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            sanitized_dom: cleanResults.map(item => ({
-                type: item.type,
-                selector: item.selector,
-                valuePresent: item.valuePresent
-            })),
 
-            privacy_manifest: {
-                raw_pii_uploaded: false,
-                redaction_enabled: true
-            },
-
-            task: "scan page for sensitive information"
-        })
-    }
-);
-
-const backendData = await backendResponse.json();
-
-console.log(
-    "VisionShield backend response:",
-    backendData
-);
 
 
             sendResponse({

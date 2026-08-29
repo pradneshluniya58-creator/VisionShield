@@ -91,6 +91,13 @@
         id="imageInput"
         accept="image/*"
     >
+    <div style="margin-top: 15px;">
+
+    <button id="useScreenshotBtn">
+        Use Page Screenshot
+    </button>
+
+</div>
 
     <img
         id="preview"
@@ -115,6 +122,9 @@
     const imageInput =
         document.getElementById("imageInput");
 
+        const useScreenshotBtn =
+    document.getElementById("useScreenshotBtn");
+
     const preview =
         document.getElementById("preview");
 
@@ -129,7 +139,50 @@
 
 
     let selectedFile = null;
+    window.addEventListener("message", async (event) => {
 
+    // Only accept messages from the same window
+    if (event.source !== window) {
+        return;
+    }
+
+    if (!event.data ||
+        event.data.type !== "VISIONSHIELD_SCREENSHOT") {
+        return;
+    }
+
+    try {
+
+        const dataUrl = event.data.dataUrl;
+
+        const response = await fetch(dataUrl);
+
+        screenshotBlob = await response.blob();
+
+        preview.src = dataUrl;
+
+        selectedFile = screenshotBlob;
+
+        runBtn.disabled = false;
+
+        status.textContent =
+            "VisionShield screenshot received.\n" +
+            "Click Run Vision Model.";
+
+        results.innerHTML = "";
+
+    } catch (error) {
+
+        console.error(error);
+
+        status.textContent =
+            "Failed to receive screenshot:\n" +
+            error.message;
+
+    }
+
+});
+let screenshotBlob = null;
 
     // ---------------------------------------------------------
     // Create Web Worker
