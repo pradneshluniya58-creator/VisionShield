@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>VisionShield - Local Vision Test</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        #runBtn {
+            margin-top: 15px;
+        }
+
+        #preview {
+            display: block;
+            width: 320px;
+            max-width: 100%;
+            margin-top: 20px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+
+        #status {
+            margin-top: 20px;
+            padding: 12px;
+            background: #eef2f5;
+            border-radius: 8px;
+            white-space: pre-wrap;
+        }
+
+        #results {
+            margin-top: 20px;
+        }
+
+        .result {
+            padding: 10px;
+            margin-top: 8px;
+            background: #f1f3f5;
+            border-radius: 8px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>VisionShield Local Vision Test</h1>
+
+    <p>
+        This page tests whether a vision model can
+        run locally in the browser.
+    </p>
+
+    <input
+        type="file"
+        id="imageInput"
+        accept="image/*"
+    >
+
+    <img
+        id="preview"
+        alt="Selected image preview"
+    >
+
+    <button id="runBtn" disabled>
+        Run Vision Model
+    </button>
+
+    <div id="status">
+        Please select an image.
+    </div>
+
+    <div id="results"></div>
+
+</div>
+
+
+<script>
+
+    const imageInput =
+        document.getElementById("imageInput");
+
+    const preview =
+        document.getElementById("preview");
+
+    const runBtn =
+        document.getElementById("runBtn");
+
+    const status =
+        document.getElementById("status");
+
+    const results =
+        document.getElementById("results");
+
+
+    let selectedFile = null;
+
+
+    // ---------------------------------------------------------
+    // Create Web Worker
+    // ---------------------------------------------------------
+
+    const visionWorker =
+        new Worker(
+            "./worker.js",
+            {
+                type: "module"
+            }
+        );
+
+
+    // ---------------------------------------------------------
+    // Receive messages from worker
+    // ---------------------------------------------------------
+
+    visionWorker.addEventListener(
+        "message",
+        (event) => {
+
+            const data = event.data;
+
+
+            // Worker status
+            if (data.type === "STATUS") {
+
+    status.textContent +=
+        "\n✅ " + data.message;
+
+    return;
+}
+
+
+
+            // Worker error
+            if (data.type === "ERROR") {
+
+                status.textContent =
+                    "Vision model error:\n" +
+                    data.message;
+
+                runBtn.disabled = false;
+
+                return;
+            }
+
+
+            // Worker result
+            if (data.type === "RESULT") {
+
+                status.textContent =
+                    "Vision inference completed successfully.";
+
+                displayResults(
+                    data.output
+                );
+
+                runBtn.disabled = false;
+
+            }
+
+        }
+    );
+
+
+    // ---------------------------------------------------------
+    // Select image
+    // ---------------------------------------------------------
+
+    imageInput.addEventListener(
+        "change",
+        (event) => {
+
+            const file =
+                event.target.files[0];
+
+
+            if (!file) {
+                return;
+            }
+
+
+            selectedFile = file;
+
+
+            preview.src =
+                URL.createObjectURL(file);
+
+
+            runBtn.disabled = false;
+
+
+            status.textContent =
+                "Image selected. Click Run Vision Model.";
+
+
+            results.innerHTML = "";
+
+        }
+    );
+
+
+    // ---------------------------------------------------------
+    // Run model inside Web Worker
+    // ---------------------------------------------------------
+
+    runBtn.addEventListener(
+        "click",
+        async () => {
+
+            if (!selectedFile) {
+                return;
+            }
+
+
+            try {
+
+                runBtn.disabled = true;
+
+
+                results.innerHTML = "";
+
+
+                status.textContent =
+                    "Preparing image for Web Worker...";
+
+
+                // Read image as ArrayBuffer
+                const imageBuffer =
+                    await selectedFile.arrayBuffer();
+
+
+                status.textContent =
+                    "Sending image to Web Worker...";
+
+
+                // Send image to worker
+                visionWorker.postMessage(
+                    {
+                        type: "RUN_INFERENCE",
+                        imageBuffer: imageBuffer,
+                        mimeType: selectedFile.type
+                    },
+                    [
+                        imageBuffer
+                    ]
+                );
+
+            } catch (error) {
+
+                console.error(error);
+
+
+                status.textContent =
+                    "Failed to send image:\n" +
+                    error.message;
+
+
+                runBtn.disabled = false;
+
+            }
+
+        }
+    );
+
+
+    // ---------------------------------------------------------
+    // Display results
+    // ---------------------------------------------------------
+
+    function displayResults(output) {
+
+        results.innerHTML = "";
+
+
+        output
+            .slice(0, 5)
+            .forEach(
+                (item) => {
+
+                    const div =
+                        document.createElement("div");
+
+
+                    div.className =
+                        "result";
+
+
+                    div.textContent =
+                        `${item.label} — ${(item.score * 100).toFixed(2)}%`;
+
+
+                    results.appendChild(div);
+
+                }
+            );
+
+    }
+
+</script>
+</body>
+
+</html>
