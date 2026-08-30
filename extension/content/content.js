@@ -102,6 +102,65 @@ console.log(
     "VisionShield backend response:",
     backendData
 );
+// STEP 4
+// Execute safe actions returned by backend
+
+const actions = backendData.actions || [];
+
+actions.forEach(action => {
+
+    if (action.safety === "allowed") {
+
+        if (action.type === "scroll") {
+
+            if (action.direction === "down") {
+                window.scrollBy({
+                    top: 500,
+                    behavior: "smooth"
+                });
+            }
+
+            if (action.direction === "up") {
+                window.scrollBy({
+                    top: -500,
+                    behavior: "smooth"
+                });
+            }
+        }
+
+        else if (action.type === "highlight") {
+
+            const element =
+                document.querySelector(action.selector);
+
+            if (element) {
+
+                element.style.outline = "3px solid red";
+                element.style.outlineOffset = "2px";
+            }
+        }
+
+        else if (action.type === "focus") {
+
+            const element =
+                document.querySelector(action.selector);
+
+            if (element) {
+                element.focus();
+            }
+        }
+    }
+
+    else if (action.safety === "requires_confirmation") {
+
+        console.log(
+            "VisionShield: User confirmation required for:",
+            action.type
+        );
+
+    }
+
+});
 
 
             sendResponse({
