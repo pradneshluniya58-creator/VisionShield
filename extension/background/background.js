@@ -1,4 +1,6 @@
-console.log("VisionShield background service worker started");
+console.log(
+    "VisionShield background service worker started"
+);
 
 
 // Extension installed
@@ -15,18 +17,13 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.runtime.onMessage.addListener(
     (message, sender, sendResponse) => {
 
-        // Check whether popup/content script is asking for screenshot
         if (message.action !== "CAPTURE_SCREENSHOT") {
             return;
         }
 
-
-        // Get the current browser window
         const windowId =
             message.windowId ?? sender.tab?.windowId;
 
-
-        // Capture the currently visible tab
         chrome.tabs.captureVisibleTab(
             windowId,
             {
@@ -34,7 +31,6 @@ chrome.runtime.onMessage.addListener(
             },
             (dataUrl) => {
 
-                // Check for Chrome API errors
                 if (chrome.runtime.lastError) {
 
                     console.error(
@@ -51,8 +47,6 @@ chrome.runtime.onMessage.addListener(
                     return;
                 }
 
-
-                // Send screenshot back
                 sendResponse({
                     success: true,
                     dataUrl: dataUrl
@@ -61,8 +55,6 @@ chrome.runtime.onMessage.addListener(
             }
         );
 
-
-        // Tell Chrome we will respond asynchronously
         return true;
 
     }
