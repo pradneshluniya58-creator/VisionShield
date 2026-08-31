@@ -4,76 +4,160 @@ function redactElement(element, type) {
         return;
     }
 
-    element.dataset.VisionShieldRedacted = "true";
-
-    element.style.border = "2px solid #ff4d6d";
-
-    element.style.boxShadow =
-        "0 0 0 4px rgba(255,77,109,0.15)";
-
-    element.style.backgroundColor =
-        "rgba(255,77,109,0.08)";
-
-    element.style.transition =
-        "all 0.3s ease";
-
-
-    // Add privacy badge
-
-    const badge = document.createElement("span");
-
-    badge.className =
-        "VisionShield-security-badge";
-
-    badge.innerText =
-        `🔒 ${type} PROTECTED`;
-
-
-    badge.style.position = "absolute";
-    badge.style.zIndex = "999999";
-    badge.style.background = "#ff4d6d";
-    badge.style.color = "white";
-    badge.style.padding = "4px 8px";
-    badge.style.borderRadius = "6px";
-    badge.style.fontSize = "10px";
-    badge.style.fontFamily = "Arial, sans-serif";
-    badge.style.fontWeight = "bold";
-    badge.style.pointerEvents = "none";
-
-
     const rect = element.getBoundingClientRect();
 
+    let overlay = element._visionShieldOverlay;
 
-    badge.style.left =
-        `${window.scrollX + rect.left}px`;
+    // Create overlay if it doesn't exist
+    if (!overlay) {
 
-    badge.style.top =
-        `${window.scrollY + rect.bottom + 5}px`;
+        overlay = document.createElement("div");
 
+        overlay.className =
+            "VisionShield-redaction-overlay";
 
-    document.body.appendChild(badge);
+        overlay.style.position = "fixed";
+        overlay.style.backgroundColor = "#000";
+        overlay.style.zIndex = "2147483647";
+        overlay.style.pointerEvents = "none";
+
+        overlay._visionShieldElement = element;
+
+        document.body.appendChild(overlay);
+
+        element._visionShieldOverlay = overlay;
+    }
+
+    // Set initial position and size
+    overlay.style.left =
+        `${rect.left}px`;
+
+    overlay.style.top =
+        `${rect.top}px`;
+
+    overlay.style.width =
+        `${rect.width}px`;
+
+    overlay.style.height =
+        `${rect.height}px`;
+
+    overlay.dataset.type = type;
+
+    element.dataset.visionShieldRedacted =
+        "true";
+
+    // Start tracking
+    startRedactionTracking();
 }
 
 
-function clearRedactions() {
+/* =========================================================
+   UPDATE REDACTION POSITIONS
+   ========================================================= */
+
+function updateRedactionPositions() {
 
     document
         .querySelectorAll(
-            '[data-VisionShield-redacted="true"]'
+            ".VisionShield-redaction-overlay"
+        )
+        .forEach(overlay => {
+
+            const element =
+                overlay._visionShieldElement;
+
+            if (!element) {
+                return;
+            }
+
+            const rect =
+                element.getBoundingClientRect();
+
+            overlay.style.left =
+                `${rect.left}px`;
+
+            overlay.style.top =
+                `${rect.top}px`;
+
+            overlay.style.width =
+                `${rect.width}px`;
+
+            overlay.style.height =
+                `${rect.height}px`;
+        });
+}
+
+
+/* =========================================================
+   CONTINUOUS REDACTION TRACKING
+   ========================================================= */
+
+var redactionAnimationFrame = null;
+
+function trackRedactions() {
+
+    updateRedactionPositions();
+
+    redactionAnimationFrame =
+        requestAnimationFrame(trackRedactions);
+}
+
+
+function startRedactionTracking() {
+
+    if (redactionAnimationFrame !== null) {
+        return;
+    }
+
+    trackRedactions();
+}
+
+
+function stopRedactionTracking() {
+
+    if (redactionAnimationFrame !== null) {
+
+        cancelAnimationFrame(
+            redactionAnimationFrame
+        );
+
+        redactionAnimationFrame = null;
+    }
+}
+
+
+/* =========================================================
+   CLEAR ALL REDACTIONS
+   ========================================================= */
+
+function clearRedactions() {
+
+    // Stop animation loop
+    stopRedactionTracking();
+
+    // Remove overlays
+    document
+        .querySelectorAll(
+            ".VisionShield-redaction-overlay"
+        )
+        .forEach(overlay => {
+
+            overlay.remove();
+
+        });
+
+    // Remove redaction state
+    document
+        .querySelectorAll(
+            '[data-vision-shield-redacted="true"]'
         )
         .forEach(element => {
 
-            element.style.border = "";
-            element.style.boxShadow = "";
-            element.style.backgroundColor = "";
+            delete element.dataset
+                .visionShieldRedacted;
 
-            delete element.dataset.VisionShieldRedacted;
+            delete element
+                ._visionShieldOverlay;
+
         });
-
-
-    document
-        .querySelectorAll(
-            ".VisionShield-security-badge"
-        )
-        .forEach(badge => badge.remove());
 }

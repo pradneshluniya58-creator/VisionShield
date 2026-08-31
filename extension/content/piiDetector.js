@@ -1,4 +1,4 @@
-const PII_THRESHOLD = 60;
+var PII_THRESHOLD = 60;
 
 function getFieldContext(element) {
 
@@ -186,7 +186,7 @@ function getPhoneScore(element){
 }
 
 
-const GOV_ID_RULES = [
+var GOV_ID_RULES = [
     {
         type: "PAN",
         pattern: /^[A-Z]{5}[0-9]{4}[A-Z]$/,
@@ -467,12 +467,3 @@ function highlightPII(detections) {
         element.style.backgroundColor = "yellow";
     });
 }
-
-const detections = detectPIIFromDOM();
-
-console.log(detections);
-
-highlightPII(detections);
-
-
-//It is pii detector code
