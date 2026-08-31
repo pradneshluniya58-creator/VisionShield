@@ -1,107 +1,91 @@
 console.log("VisionShield content script loaded");
 
-
 chrome.runtime.onMessage.addListener(
-    async (message, sender, sendResponse) => {
+    (message, sender, sendResponse) => {
 
         if (message.action !== "START_VisionShield") {
-
             return;
         }
 
-
-        console.log(
-            "VisionShield: Starting privacy scan..."
-        );
-
+        console.log("VisionShield: Starting privacy scan...");
 
         try {
 
-            // STEP 1
-            // Scan DOM
+            clearRedactions();
 
-            const detections =
-                detectPIIFromDOM();
-
+            const detections = detectPIIFromDOM();
 
             console.log(
                 "VisionShield detections:",
                 detections
             );
 
+            const cleanResults = detections.map(item => {
 
-            // STEP 2
-            // Highlight sensitive fields
+                redactElement(item.element,item.type);
 
-            detections.forEach(item => {
+                const rect = item.element.getBoundingClientRect();
 
-                const element =
-                    document.querySelector(
-                        item.selector
-                    );
+                return {
+                    type: item.type,
+                    sub_type: item.sub_type || null,
+                    score: item.score,
+                    reasons: item.reasons,
 
+                    // Viewport coordinates
+                    rect: {
+                        x: rect.left,
+                        y: rect.top,
+                        width: rect.width,
+                        height: rect.height
+                    }
+                };
+            });
+            
+            console.log(
+                "VisionShield redaction zones:",
+                cleanResults
+            );
 
-                if (element) {
-
-                    redactElement(
-                        element,
-                        item.type
-                    );
-
-                }
-
+            const sanitizedDOM = detections.map((item, index) => {
+                return {
+                    type: item.type,
+                    sub_type: item.sub_type || null,
+                    token: `[${item.type}_${index + 1}]`
+                };
             });
 
-
-            // STEP 3
-            // Return safe result to popup
-
-            const cleanResults =
-                detections.map(item => ({
-                    type: item.type,
-                    selector: item.selector,
-                    valuePresent: item.valuePresent
-                }));
-
-
             console.log(
-                `PII detected: ${cleanResults.length}`
+                "VisionShield sanitized DOM:",
+                sanitizedDOM
             );
-
-
-            console.log(
-                `PII redacted: ${cleanResults.length}`
-            );
-
-
 
             sendResponse({
 
                 success: true,
+                
+                redactionComplete: true,
 
                 detections: cleanResults,
 
-                piiDetected:
-                    cleanResults.length,
+                piiDetected: cleanResults.length,
 
-                piiRedacted:
-                    cleanResults.length,
+                piiRedacted: cleanResults.length,
 
                 rawPIIUploaded: 0,
 
-                privacyVerified: true
+                privacyVerified: true,
+
+                sanitizedDOM: sanitizedDOM
 
             });
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "VisionShield scan error:",
                 error
             );
-
 
             sendResponse({
 
@@ -112,9 +96,7 @@ chrome.runtime.onMessage.addListener(
                 error: error.message
 
             });
-
         }
-
 
         return true;
     }
