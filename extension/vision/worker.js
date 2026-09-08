@@ -4,9 +4,9 @@ import {
 } from "@huggingface/transformers";
 
 
-// ---------------------------------------------------------
-// Local ONNX Runtime configuration
-// ---------------------------------------------------------
+// =========================================================
+// LOCAL ONNX RUNTIME CONFIGURATION
+// =========================================================
 
 env.backends.onnx.wasm.wasmPaths =
     new URL(
@@ -18,47 +18,69 @@ env.backends.onnx.wasm.numThreads = 1;
 env.backends.onnx.wasm.proxy = false;
 
 
-// ---------------------------------------------------------
-// Vision model
-// ---------------------------------------------------------
+// =========================================================
+// OBJECT DETECTION MODEL
+// =========================================================
 
-let classifier = null;
+let detector = null;
+let detectorPromise = null;
 
 
-// ---------------------------------------------------------
-// Load model
-// ---------------------------------------------------------
+// =========================================================
+// LOAD OBJECT DETECTOR
+// =========================================================
 
 async function loadModel() {
 
-    if (classifier) {
-        return classifier;
+    // Model is already completely loaded
+    if (detector) {
+        return detector;
     }
 
-    self.postMessage({
-        type: "STATUS",
-        message:
-            "Loading local vision model..."
-    });
+    // Model is currently loading
+    // Reuse the same loading operation
+    if (detectorPromise) {
+        return detectorPromise;
+    }
 
-    classifier = await pipeline(
-        "image-classification",
-        "onnx-community/mobilenetv4_conv_small.e2400_r224_in1k"
-    );
+    detectorPromise = (async () => {
 
-    self.postMessage({
-        type: "STATUS",
-        message:
-            "Vision model loaded successfully."
-    });
+        self.postMessage({
+            type: "STATUS",
+            message: "Loading local object detection model..."
+        });
 
-    return classifier;
+        console.log(
+            "[Vision Worker] Loading object detection model..."
+        );
+
+        const model = await pipeline(
+            "object-detection",
+            "Xenova/detr-resnet-50"
+        );
+
+        detector = model;
+
+        self.postMessage({
+            type: "STATUS",
+            message: "Object detection model loaded successfully."
+        });
+
+        console.log(
+            "[Vision Worker] Object detection model loaded."
+        );
+
+        return detector;
+
+    })();
+
+    return detectorPromise;
 }
 
 
-// ---------------------------------------------------------
-// Worker messages
-// ---------------------------------------------------------
+// =========================================================
+// WORKER MESSAGE HANDLER
+// =========================================================
 
 self.addEventListener(
     "message",
@@ -67,14 +89,25 @@ self.addEventListener(
         const data = event.data;
 
 
-        // Load model
-        if (data.type === "LOAD_MODEL") {
+        // =================================================
+        // LOAD MODEL
+        // =================================================
+
+        if (
+            data.type === "LOAD_MODEL"
+        ) {
 
             try {
 
                 await loadModel();
 
             } catch (error) {
+
+                console.error(
+                    "[Vision Worker] Model loading error:",
+                    error
+                );
+
 
                 self.postMessage({
                     type: "ERROR",
@@ -89,24 +122,41 @@ self.addEventListener(
         }
 
 
-        // Run inference
-        if (data.type === "RUN_INFERENCE") {
+        // =================================================
+        // RUN OBJECT DETECTION
+        // =================================================
+
+        if (
+            data.type === "RUN_INFERENCE"
+        ) {
 
             try {
 
                 const model =
                     await loadModel();
 
+
                 self.postMessage({
                     type: "STATUS",
                     message:
-                        "Running vision inference..."
+                        "Running object detection..."
                 });
 
 
+                console.log(
+                    "[Vision Worker] Starting object detection..."
+                );
+
+
+                // ---------------------------------------------
+                // Convert ArrayBuffer → Blob
+                // ---------------------------------------------
+
                 const blob =
                     new Blob(
-                        [data.imageBuffer],
+                        [
+                            data.imageBuffer
+                        ],
                         {
                             type:
                                 data.mimeType ||
@@ -115,27 +165,58 @@ self.addEventListener(
                     );
 
 
-                const output =
-                    await model(blob);
+                    const imageBitmap =
+    await createImageBitmap(blob);
+
+const imageWidth =
+    imageBitmap.width;
+
+const imageHeight =
+    imageBitmap.height;
+
+imageBitmap.close();
+
+console.log(
+    "[Vision Worker] Screenshot dimensions:",
+    imageWidth,
+    "x",
+    imageHeight
+);
 
 
-                console.log(
-    "Worker model output:",
+                // ---------------------------------------------
+                // Run DETR
+                // ---------------------------------------------
+
+                const output = await model(
+    blob,
+    {
+        threshold: 0.2
+    }
+);
+
+console.log(
+    "[Vision Worker] Object detection complete:",
     JSON.stringify(output, null, 2)
 );
 
-                self.postMessage({
-                    type: "RESULT",
-                    output: output
-                });
 
+
+
+self.postMessage({
+    type: "RESULT",
+    output,
+    imageWidth,
+    imageHeight
+});
 
             } catch (error) {
 
                 console.error(
-                    "Worker inference error:",
+                    "[Vision Worker] Inference error:",
                     error
                 );
+
 
                 self.postMessage({
                     type: "ERROR",
@@ -150,3 +231,27 @@ self.addEventListener(
 
     }
 );
+// =====================================================
+// PRELOAD MODEL
+// Start loading the AI model as soon as the worker starts
+// =====================================================
+
+console.log(
+    "[Vision Worker] Preloading object detection model..."
+);
+
+loadModel().catch((error) => {
+
+    console.error(
+        "[Vision Worker] Preload error:",
+        error
+    );
+
+    self.postMessage({
+        type: "ERROR",
+        message:
+            error?.message ||
+            String(error)
+    });
+
+});

@@ -16,7 +16,7 @@ function redactElement(element, type) {
         overlay.className =
             "VisionShield-redaction-overlay";
 
-        overlay.style.position = "fixed";
+        overlay.style.position = "absolute";
         overlay.style.backgroundColor = "#000";
         overlay.style.zIndex = "2147483647";
         overlay.style.pointerEvents = "none";
