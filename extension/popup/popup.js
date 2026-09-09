@@ -29,6 +29,47 @@ const visionWorker =
 
     let lastSanitizedDOM = [];
 
+    const scanView = document.getElementById("scanView");
+    const scanSteps = document.getElementById("scanSteps");
+    const resultArea = document.getElementById("resultArea");
+
+    const scanCircle = document.querySelector(".scan-circle");
+    const scanTitle = document.querySelector(".scan-title");
+    const scanDescription = document.querySelector(".scan-description");
+
+    const stepPII = document.getElementById("stepPII");
+    const stepVisual = document.getElementById("stepVisual");
+    const stepProtect = document.getElementById("stepProtect");
+    const stepVerify = document.getElementById("stepVerify");
+
+    const scanAgainBtn = document.getElementById("scanAgainBtn");
+
+
+    function updateScanStep(activeStep) {
+
+        const steps = [
+            stepPII,
+            stepVisual,
+            stepProtect,
+            stepVerify
+        ];
+
+        steps.forEach((step, index) => {
+
+            step.classList.remove("active");
+            step.classList.remove("done");
+
+            if (index < activeStep) {
+                step.classList.add("done");
+            }
+
+            if (index === activeStep) {
+                step.classList.add("active");
+            }
+
+        });
+    }
+
     // Preload the vision model in the background
 
 
@@ -113,7 +154,7 @@ if (event.data.type === "RESULT") {
     // ---------------------------------------------
 
     try {
-
+        updateScanStep(2);
         const redactionResponse =
             await chrome.tabs.sendMessage(
                 tab.id,
@@ -244,6 +285,7 @@ if (event.data.type === "RESULT") {
         console.log(
             "VisionShield: FINAL sanitized screenshot captured."
         );
+        updateScanStep(3);
 
 
         // ---------------------------------------------
@@ -279,6 +321,13 @@ if (event.data.type === "RESULT") {
 
         privacyStatus.textContent =
             "VERIFIED";
+
+        updateScanStep(4);
+
+        setTimeout(() => {
+        scanView.style.display = "none";
+        resultArea.style.display = "block";
+        }, 400);
 
 
         console.log(
@@ -355,7 +404,11 @@ visionWorker.addEventListener(
 // START BUTTON
 // =====================================================
 
-startBtn.addEventListener("click", async () => {
+async function startScan(){
+
+    // Restore scan screen for a new scan
+    scanView.style.display = "block";
+    resultArea.style.display = "none";
 
     startBtn.textContent =
         "⏳  Scanning page...";
@@ -364,6 +417,15 @@ startBtn.addEventListener("click", async () => {
 
     privacyStatus.textContent =
         "SCANNING";
+
+    scanCircle.style.display = "none";
+    scanTitle.style.display = "none";
+    scanDescription.style.display = "none";
+
+    scanSteps.style.display = "block";
+    resultArea.style.display = "none";
+
+    updateScanStep(0);
 
 
     try {
@@ -391,21 +453,6 @@ startBtn.addEventListener("click", async () => {
         console.log(
             "VisionShield: Injecting privacy modules..."
         );
-
-
-        await chrome.scripting.executeScript({
-
-            target: {
-                tabId: tab.id
-            },
-
-            files: [
-                "content/piiDetector.js",
-                "content/redaction.js",
-                "content/content.js"
-            ]
-
-        });
 
 
         // =====================================================
@@ -448,7 +495,7 @@ startBtn.addEventListener("click", async () => {
         console.log(
             "VisionShield: DOM redaction completed."
         );
-
+        updateScanStep(1);
 
         // =====================================================
         // STEP 3: DISPLAY DETECTION RESULTS
@@ -576,6 +623,9 @@ startBtn.addEventListener("click", async () => {
             await imageBlob.arrayBuffer();
 
 
+        updateScanStep(1);
+        stepVisual.querySelector(".step-icon").textContent = "●";   
+            
         visionWorker.postMessage(
             {
                 type: "RUN_INFERENCE",
@@ -653,7 +703,11 @@ startBtn.addEventListener("click", async () => {
         "scanning"
     );
 
-});
+}
+
+startBtn.addEventListener("click", startScan);
+
+scanAgainBtn.addEventListener("click", startScan);
 
 
 // =====================================================

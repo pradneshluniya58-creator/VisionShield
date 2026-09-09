@@ -375,11 +375,12 @@ function getAddressScore(element) {
     };
 }
 
-function detectPIIFromDOM(){
+function detectPIIFromDOM() {
     const detections = [];
-    document.querySelectorAll("input , textarea").forEach(element=>{
 
-        if(element.type === "hidden") return;
+    document.querySelectorAll("input, textarea").forEach(element => {
+
+        if (element.type === "hidden") return;
 
         const emailresult = getEmailScore(element);
         const passwordresult = getPasswordScore(element);
@@ -388,73 +389,74 @@ function detectPIIFromDOM(){
         const nameresult = getNameScore(element);
         const addressresult = getAddressScore(element);
 
-        console.log(element.name , getFieldContext(element))
+        console.log(element.name, getFieldContext(element));
 
         console.log(
             element.name,
-            "EMAIL",emailresult,
-            "PASSWORD",passwordresult,
-            "PHONE" ,phoneresult,
-            "GOV_ID",govIdresult,
-            "NAME",nameresult,
-            "ADDRESS" ,addressresult
+            "EMAIL", emailresult,
+            "PASSWORD", passwordresult,
+            "PHONE", phoneresult,
+            "GOV_ID", govIdresult,
+            "NAME", nameresult,
+            "ADDRESS", addressresult
         );
 
-
-        if(emailresult.score >= PII_THRESHOLD){
-            detections.push({
+        // Collect all possible classifications for this field
+        const candidates = [
+            {
                 type: "EMAIL",
-                element: element,
                 score: emailresult.score,
                 reasons: emailresult.reasons
-            })
-        }
-
-        if(passwordresult.score >= PII_THRESHOLD){
-            detections.push({
+            },
+            {
                 type: "PASSWORD",
-                element: element,
                 score: passwordresult.score,
                 reasons: passwordresult.reasons
-            })
-        }
-
-        if(phoneresult.score >= PII_THRESHOLD){
-            detections.push({
+            },
+            {
                 type: "PHONE",
-                element: element,
                 score: phoneresult.score,
                 reasons: phoneresult.reasons
-            })
-        }
-
-        if(govIdresult.score >=PII_THRESHOLD){
-            detections.push({
+            },
+            {
                 type: "GOV_ID",
                 sub_type: govIdresult.type,
-                element: element,
                 score: govIdresult.score,
                 reasons: govIdresult.reasons
-            })
-        }
-
-        if(nameresult.score >=PII_THRESHOLD){
-            detections.push({
+            },
+            {
                 type: "NAME",
-                element: element,
                 score: nameresult.score,
                 reasons: nameresult.reasons
-            })
-        }
-        if (addressresult.score >= PII_THRESHOLD) {
-        detections.push({
-        type: "ADDRESS",
-        element: element,
-        score: addressresult.score,
-        reasons: addressresult.reasons
-        });
-        }
+            },
+            {
+                type: "ADDRESS",
+                score: addressresult.score,
+                reasons: addressresult.reasons
+            }
+        ];
 
+        // Keep only classifications that cross the threshold
+        const validCandidates = candidates.filter(
+            candidate => candidate.score >= PII_THRESHOLD
+        );
+
+        // Select the strongest classification for this field
+        if (validCandidates.length > 0) {
+
+            const bestMatch = validCandidates.reduce(
+                (best, current) =>
+                    current.score > best.score ? current : best
+            );
+
+            detections.push({
+                type: bestMatch.type,
+                sub_type: bestMatch.sub_type,
+                element: element,
+                score: bestMatch.score,
+                reasons: bestMatch.reasons
+            });
+        }
     });
 
     return detections;

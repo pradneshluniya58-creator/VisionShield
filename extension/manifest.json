@@ -16,7 +16,17 @@
   "service_worker": "background/background.bundle.js",
   "type": "module"
 },
-
+"content_scripts": [
+  {
+    "matches": ["<all_urls>"],
+    "js": [
+      "content/piiDetector.js",
+      "content/redaction.js",
+      "content/content.js"
+    ],
+    "run_at": "document_idle"
+  }
+],
 "web_accessible_resources": [
   {
     "resources": [
