@@ -8,6 +8,9 @@ const screenshotPreview =
 const screenshotStatus =
     document.getElementById("screenshotStatus");
 
+const scanBadges =
+    document.getElementById("scanBadges");
+
 
 // =====================================================
 // VISION WORKER
@@ -28,6 +31,8 @@ const visionWorker =
     );
 
 let lastSanitizedDOM = [];
+let scanStartTime = 0;
+let lastScanResponse = null;
 
 const scanView = document.getElementById("scanView");
 const scanSteps = document.getElementById("scanSteps");
@@ -43,6 +48,37 @@ const stepProtect = document.getElementById("stepProtect");
 const stepVerify = document.getElementById("stepVerify");
 
 const scanAgainBtn = document.getElementById("scanAgainBtn");
+
+const confirmArea = document.getElementById("confirmArea");
+const allowSubmitBtn = document.getElementById("allowSubmitBtn");
+const cancelSubmitBtn = document.getElementById("cancelSubmitBtn");
+
+
+// =====================================================
+// SCAN STATE PERSISTENCE
+// =====================================================
+
+async function saveScanState(state) {
+    await chrome.storage.local.set({
+        visionShieldScanState: state
+    });
+}
+
+async function loadScanState() {
+    const result =
+        await chrome.storage.local.get(
+            "visionShieldScanState"
+        );
+
+    return result.visionShieldScanState || null;
+}
+
+async function clearScanState() {
+    await chrome.storage.local.remove(
+        "visionShieldScanState"
+    );
+}
+
 
 
 function updateScanStep(activeStep) {
@@ -102,6 +138,9 @@ visionWorker.addEventListener(
 
             const visualDetections =
                 event.data.output || [];
+
+            const visualDetectedCount =
+                visualDetections.length;
 
             const imageWidth =
                 event.data.imageWidth;
@@ -363,22 +402,11 @@ visionWorker.addEventListener(
 
                 const agentResult = await agentResponse.json();
 
+                lastScanResponse.agentAction = agentResult.action;
+
                 console.log(
                     "VisionShield agent decision:",
                     agentResult
-                );
-
-                const agentExecution = await chrome.tabs.sendMessage(
-                    tab.id,
-                    {
-                        action: "EXECUTE_AGENT_ACTION",
-                        agentAction: agentResult.action
-                    }
-                );
-
-                console.log(
-                    "VisionShield agent execution:",
-                    agentExecution
                 );
 
 
@@ -392,16 +420,80 @@ visionWorker.addEventListener(
                 );
 
 
+                const processingTime =
+                    (performance.now() - scanStartTime) / 1000;
+
                 privacyStatus.textContent =
                     "VERIFIED";
 
                 updateScanStep(4);
 
+                /* ==============================
+                   SAVE COMPLETED SCAN STATE
+                   ============================== */
+
+                await saveScanState({
+                    scanCompleted: true,
+
+                    piiDetected:
+                        lastScanResponse?.detections?.length ??
+                        lastSanitizedDOM.length,
+
+                    piiRedacted:
+                        lastScanResponse?.detections?.length ??
+                        lastSanitizedDOM.length,
+
+                    visualDetected:
+                        visualDetectedCount,
+
+                    visualRedacted:
+                        redactionResponse.redactedCount,
+
+                    rawPIISent:
+                        privacyResult.rawPIIReceived ?? 0,
+
+                    processingTime:
+                        Number(processingTime.toFixed(2)),
+
+                    privacyVerified:
+                        privacyResult.privacyVerified,
+
+                    finalScreenshot:
+                        finalScreenshotResponse.dataUrl,
+
+                    agentAction:
+                        agentResult.action
+                });
+
+                document.getElementById("detectedCount").textContent =
+                    lastScanResponse?.detections?.length ?? lastSanitizedDOM.length;
+
+                document.getElementById("redactedCount").textContent =
+                    lastScanResponse?.detections?.length ?? lastSanitizedDOM.length;
+
+                document.getElementById("visualDetectedCount").textContent =
+                    visualDetectedCount;
+
+                document.getElementById("visualRedactedCount").textContent =
+                    redactionResponse.redactedCount;
+
+                document.getElementById("rawPiiCount").textContent =
+                    privacyResult.rawPIIReceived ?? 0;
+
+                document.getElementById("processingTime").textContent =
+                    `${processingTime.toFixed(2)} s`;
+
+                document.getElementById("privacyVerification").textContent =
+                    privacyResult.privacyVerified ? "PASSED" : "FAILED";
+
+                document.getElementById("finalScreenshot").src =
+                    finalScreenshotResponse.dataUrl;
+
                 setTimeout(() => {
                     scanView.style.display = "none";
-                    resultArea.style.display = "block";
+                    resultArea.style.display = "none";
+                    confirmArea.style.display = "block";
                 }, 400);
-
 
                 console.log(
                     "🛡️ VisionShield: Privacy protection VERIFIED"
@@ -479,9 +571,18 @@ visionWorker.addEventListener(
 
 async function startScan() {
 
+    await clearScanState();
+
+    scanStartTime = performance.now();
+
     // Restore scan screen for a new scan
     scanView.style.display = "block";
     resultArea.style.display = "none";
+
+    scanCircle.style.display = "flex";
+    scanTitle.style.display = "block";
+    scanDescription.style.display = "block";
+    scanBadges.style.display = "flex";
 
     startBtn.textContent =
         "⏳  Scanning page...";
@@ -494,6 +595,7 @@ async function startScan() {
     scanCircle.style.display = "none";
     scanTitle.style.display = "none";
     scanDescription.style.display = "none";
+    scanBadges.style.display = "none";
 
     scanSteps.style.display = "block";
     resultArea.style.display = "none";
@@ -545,8 +647,8 @@ async function startScan() {
                 }
             );
 
-        lastSanitizedDOM =
-            response.sanitizedDOM || [];
+        lastScanResponse = response;
+        lastSanitizedDOM = response.sanitizedDOM || [];
 
 
         console.log(
@@ -766,6 +868,68 @@ startBtn.addEventListener("click", startScan);
 
 scanAgainBtn.addEventListener("click", startScan);
 
+/* ==============================
+   RESTORE SAVED SCAN STATE
+   ============================== */
+
+async function restoreScanState() {
+
+    const state = await loadScanState();
+
+    if (!state || !state.scanCompleted) {
+        return;
+    }
+
+    console.log(
+        "VisionShield: Restoring previous scan result"
+    );
+
+    scanView.style.display = "none";
+    resultArea.style.display = "block";
+
+    startBtn.textContent = "🔄 Scan Again";
+    startBtn.classList.remove("scanning");
+
+    document.getElementById("detectedCount").textContent =
+        state.piiDetected ?? 0;
+
+    document.getElementById("redactedCount").textContent =
+        state.piiRedacted ?? 0;
+
+    document.getElementById("visualDetectedCount").textContent =
+        state.visualDetected ?? 0;
+
+    document.getElementById("visualRedactedCount").textContent =
+        state.visualRedacted ?? 0;
+
+    document.getElementById("rawPiiCount").textContent =
+        state.rawPIISent ?? 0;
+
+    document.getElementById("processingTime").textContent =
+        `${Number(state.processingTime ?? 0).toFixed(2)} s`;
+
+    document.getElementById("privacyVerification").textContent =
+        state.privacyVerified
+            ? "PASSED"
+            : "FAILED";
+
+    if (state.finalScreenshot) {
+
+        const finalScreenshot =
+            document.getElementById("finalScreenshot");
+
+        finalScreenshot.src =
+            state.finalScreenshot;
+    }
+
+    privacyStatus.textContent =
+        state.privacyVerified
+            ? "VERIFIED"
+            : "ERROR";
+}
+
+restoreScanState();
+
 
 // =====================================================
 // DISPLAY RESULTS
@@ -895,3 +1059,40 @@ function getIcon(type) {
             return "🔒";
     }
 }
+
+allowSubmitBtn.addEventListener("click", async () => {
+
+    const [tab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true
+    });
+
+    if (!lastScanResponse || !tab?.id) {
+        return;
+    }
+
+    allowSubmitBtn.textContent = "SUBMITTING...";
+    allowSubmitBtn.disabled = true;
+
+    try {
+
+        const response = await chrome.tabs.sendMessage(tab.id, {
+            action: "EXECUTE_AGENT_ACTION",
+            agentAction: lastScanResponse.agentAction
+        });
+
+        console.log("VisionShield: Agent action executed:", response);
+
+    } catch (error) {
+
+        console.error("VisionShield submission error:", error);
+
+        allowSubmitBtn.textContent = "ALLOW & SUBMIT";
+        allowSubmitBtn.disabled = false;
+    }
+});
+
+cancelSubmitBtn.addEventListener("click", () => {
+    confirmArea.style.display = "none";
+    resultArea.style.display = "block";
+});
