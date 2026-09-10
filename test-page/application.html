@@ -3,704 +3,684 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>TalentFlow — Job Application</title>
+    <title>TalentFlow — Job Application</title>
 
-<style>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-* {
-    box-sizing: border-box;
-}
+        html,
+        body {
+            margin: 0;
+            width: 100%;
+            min-height: 100%;
+        }
 
-html,
-body {
-    margin: 0;
-    width: 100%;
-    min-height: 100%;
-}
+        body {
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
 
-body {
-    font-family:
-        Inter,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Arial,
-        sans-serif;
+            background:
+                linear-gradient(135deg,
+                    #f4f7fb 0%,
+                    #eef2ff 50%,
+                    #f8fafc 100%);
 
-    background:
-        linear-gradient(
-            135deg,
-            #f4f7fb 0%,
-            #eef2ff 50%,
-            #f8fafc 100%
-        );
-
-    color: #172033;
-}
+            color: #172033;
+        }
 
 
-/* =========================
+        /* =========================
    TOP NAVIGATION
    ========================= */
 
-.navbar {
+        .navbar {
 
-    height: 64px;
+            height: 64px;
 
-    background: rgba(255,255,255,0.94);
+            background: rgba(255, 255, 255, 0.94);
 
-    border-bottom: 1px solid #e6eaf1;
+            border-bottom: 1px solid #e6eaf1;
 
-    display: flex;
+            display: flex;
 
-    align-items: center;
+            align-items: center;
 
-    justify-content: space-between;
+            justify-content: space-between;
 
-    padding: 0 34px;
+            padding: 0 34px;
 
-    backdrop-filter: blur(12px);
-}
+            backdrop-filter: blur(12px);
+        }
 
-.brand {
+        .brand {
 
-    display: flex;
+            display: flex;
 
-    align-items: center;
+            align-items: center;
 
-    gap: 10px;
+            gap: 10px;
 
-    font-weight: 750;
+            font-weight: 750;
 
-    font-size: 17px;
-}
+            font-size: 17px;
+        }
 
-.brand-icon {
+        .brand-icon {
 
-    width: 34px;
+            width: 34px;
 
-    height: 34px;
+            height: 34px;
 
-    border-radius: 10px;
+            border-radius: 10px;
 
-    display: flex;
+            display: flex;
 
-    align-items: center;
+            align-items: center;
 
-    justify-content: center;
+            justify-content: center;
 
-    color: white;
+            color: white;
 
-    font-size: 17px;
+            font-size: 17px;
 
-    background:
-        linear-gradient(
-            135deg,
-            #635bff,
-            #3977ff
-        );
+            background:
+                linear-gradient(135deg,
+                    #635bff,
+                    #3977ff);
 
-    box-shadow:
-        0 5px 15px
-        rgba(82,91,220,0.25);
-}
+            box-shadow:
+                0 5px 15px rgba(82, 91, 220, 0.25);
+        }
 
-.nav-right {
+        .nav-right {
 
-    display: flex;
+            display: flex;
 
-    align-items: center;
+            align-items: center;
 
-    gap: 18px;
+            gap: 18px;
 
-    font-size: 12px;
+            font-size: 12px;
 
-    color: #697386;
-}
+            color: #697386;
+        }
 
-.secure-badge {
+        .secure-badge {
 
-    display: flex;
+            display: flex;
 
-    align-items: center;
+            align-items: center;
 
-    gap: 6px;
+            gap: 6px;
 
-    padding: 7px 11px;
+            padding: 7px 11px;
 
-    border-radius: 20px;
+            border-radius: 20px;
 
-    background: #f0fdf4;
+            background: #f0fdf4;
 
-    color: #15803d;
+            color: #15803d;
 
-    font-weight: 650;
-}
+            font-weight: 650;
+        }
 
 
-/* =========================
+        /* =========================
    MAIN
    ========================= */
 
-.page {
+        .page {
 
-    width: 1120px;
+            width: 1120px;
 
-    max-width: 94%;
+            max-width: 94%;
 
-    margin: 24px auto 28px;
-}
+            margin: 24px auto 28px;
+        }
 
 
-/* =========================
+        /* =========================
    JOB HEADER
    ========================= */
 
-.job-header {
+        .job-header {
 
-    background: white;
+            background: white;
 
-    border: 1px solid #e5e9f1;
+            border: 1px solid #e5e9f1;
 
-    border-radius: 18px;
+            border-radius: 18px;
 
-    padding: 19px 24px;
+            padding: 19px 24px;
 
-    display: flex;
+            display: flex;
 
-    align-items: center;
+            align-items: center;
 
-    justify-content: space-between;
+            justify-content: space-between;
 
-    box-shadow:
-        0 10px 35px
-        rgba(30, 41, 70, 0.07);
+            box-shadow:
+                0 10px 35px rgba(30, 41, 70, 0.07);
 
-    margin-bottom: 16px;
-}
+            margin-bottom: 16px;
+        }
 
-.job-info {
+        .job-info {
 
-    display: flex;
+            display: flex;
 
-    align-items: center;
+            align-items: center;
 
-    gap: 15px;
-}
+            gap: 15px;
+        }
 
-.company-logo {
+        .company-logo {
 
-    width: 48px;
+            width: 48px;
 
-    height: 48px;
+            height: 48px;
 
-    border-radius: 13px;
+            border-radius: 13px;
 
-    background:
-        linear-gradient(
-            135deg,
-            #111827,
-            #334155
-        );
+            background:
+                linear-gradient(135deg,
+                    #111827,
+                    #334155);
 
-    color: white;
+            color: white;
 
-    display: flex;
+            display: flex;
 
-    align-items: center;
+            align-items: center;
 
-    justify-content: center;
+            justify-content: center;
 
-    font-weight: 800;
+            font-weight: 800;
 
-    font-size: 16px;
-}
+            font-size: 16px;
+        }
 
-.job-title {
+        .job-title {
 
-    margin: 0;
+            margin: 0;
 
-    font-size: 20px;
+            font-size: 20px;
 
-    font-weight: 750;
-}
+            font-weight: 750;
+        }
 
-.company {
+        .company {
 
-    margin-top: 3px;
+            margin-top: 3px;
 
-    color: #697386;
+            color: #697386;
 
-    font-size: 12px;
-}
+            font-size: 12px;
+        }
 
-.job-meta {
+        .job-meta {
 
-    display: flex;
+            display: flex;
 
-    gap: 8px;
+            gap: 8px;
 
-    margin-top: 6px;
-}
+            margin-top: 6px;
+        }
 
-.tag {
+        .tag {
 
-    padding: 4px 8px;
+            padding: 4px 8px;
 
-    background: #f1f5f9;
+            background: #f1f5f9;
 
-    color: #475569;
+            color: #475569;
 
-    border-radius: 6px;
+            border-radius: 6px;
 
-    font-size: 10px;
+            font-size: 10px;
 
-    font-weight: 600;
-}
+            font-weight: 600;
+        }
 
-.application-status {
+        .application-status {
 
-    text-align: right;
+            text-align: right;
 
-    font-size: 11px;
+            font-size: 11px;
 
-    color: #8a94a6;
-}
+            color: #8a94a6;
+        }
 
-.progress {
+        .progress {
 
-    margin-top: 7px;
+            margin-top: 7px;
 
-    width: 130px;
+            width: 130px;
 
-    height: 5px;
+            height: 5px;
 
-    background: #e9edf4;
+            background: #e9edf4;
 
-    border-radius: 10px;
+            border-radius: 10px;
 
-    overflow: hidden;
-}
+            overflow: hidden;
+        }
 
-.progress-bar {
+        .progress-bar {
 
-    width: 65%;
+            width: 65%;
 
-    height: 100%;
+            height: 100%;
 
-    background:
-        linear-gradient(
-            90deg,
-            #635bff,
-            #3977ff
-        );
+            background:
+                linear-gradient(90deg,
+                    #635bff,
+                    #3977ff);
 
-    border-radius: 10px;
-}
+            border-radius: 10px;
+        }
 
 
-/* =========================
+        /* =========================
    FORM LAYOUT
    ========================= */
 
-.form-grid {
+        .form-grid {
 
-    display: grid;
+            display: grid;
 
-    grid-template-columns: 1.55fr 0.75fr;
+            grid-template-columns: 1.55fr 0.75fr;
 
-    gap: 16px;
+            gap: 16px;
 
-    align-items: stretch;
-}
+            align-items: stretch;
+        }
 
-.card {
+        .card {
 
-    background: white;
+            background: white;
 
-    border: 1px solid #e5e9f1;
+            border: 1px solid #e5e9f1;
 
-    border-radius: 17px;
+            border-radius: 17px;
 
-    padding: 19px 21px;
+            padding: 19px 21px;
 
-    box-shadow:
-        0 8px 28px
-        rgba(30, 41, 70, 0.055);
-}
+            box-shadow:
+                0 8px 28px rgba(30, 41, 70, 0.055);
+        }
 
-.card-header {
+        .card-header {
 
-    display: flex;
+            display: flex;
 
-    align-items: center;
+            align-items: center;
 
-    justify-content: space-between;
+            justify-content: space-between;
 
-    margin-bottom: 14px;
-}
+            margin-bottom: 14px;
+        }
 
-.card-title {
+        .card-title {
 
-    margin: 0;
+            margin: 0;
 
-    font-size: 14px;
+            font-size: 14px;
 
-    font-weight: 750;
-}
+            font-weight: 750;
+        }
 
-.card-description {
+        .card-description {
 
-    margin: 3px 0 0;
+            margin: 3px 0 0;
 
-    color: #8a94a6;
+            color: #8a94a6;
 
-    font-size: 10px;
-}
+            font-size: 10px;
+        }
 
-.required {
+        .required {
 
-    color: #a0a8b7;
+            color: #a0a8b7;
 
-    font-size: 10px;
-}
+            font-size: 10px;
+        }
 
 
-/* =========================
+        /* =========================
    INPUTS
    ========================= */
 
-.field-row {
+        .field-row {
 
-    display: grid;
+            display: grid;
 
-    grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr;
 
-    gap: 12px;
-}
+            gap: 12px;
+        }
 
-.field {
+        .field {
 
-    margin-bottom: 11px;
-}
+            margin-bottom: 11px;
+        }
 
-label {
+        label {
 
-    display: block;
+            display: block;
 
-    font-size: 10px;
+            font-size: 10px;
 
-    font-weight: 650;
+            font-weight: 650;
 
-    color: #465166;
+            color: #465166;
 
-    margin-bottom: 5px;
-}
+            margin-bottom: 5px;
+        }
 
-input,
-textarea,
-select {
+        input,
+        textarea,
+        select {
 
-    width: 100%;
+            width: 100%;
 
-    border: 1px solid #dce1ea;
+            border: 1px solid #dce1ea;
 
-    background: #fbfcfe;
+            background: #fbfcfe;
 
-    border-radius: 8px;
+            border-radius: 8px;
 
-    padding: 9px 10px;
+            padding: 9px 10px;
 
-    font-family: inherit;
+            font-family: inherit;
 
-    font-size: 11px;
+            font-size: 11px;
 
-    color: #172033;
+            color: #172033;
 
-    outline: none;
+            outline: none;
 
-    transition:
-        border-color .15s,
-        box-shadow .15s,
-        background .15s;
-}
+            transition:
+                border-color .15s,
+                box-shadow .15s,
+                background .15s;
+        }
 
-input {
+        input {
 
-    height: 35px;
-}
+            height: 35px;
+        }
 
-textarea {
+        textarea {
 
-    height: 55px;
+            height: 55px;
 
-    resize: none;
-}
+            resize: none;
+        }
 
-input:focus,
-textarea:focus,
-select:focus {
+        input:focus,
+        textarea:focus,
+        select:focus {
 
-    border-color: #635bff;
+            border-color: #635bff;
 
-    background: white;
+            background: white;
 
-    box-shadow:
-        0 0 0 3px
-        rgba(99,91,255,0.08);
-}
+            box-shadow:
+                0 0 0 3px rgba(99, 91, 255, 0.08);
+        }
 
-input::placeholder,
-textarea::placeholder {
+        input::placeholder,
+        textarea::placeholder {
 
-    color: #a6adba;
-}
+            color: #a6adba;
+        }
 
 
-/* =========================
+        /* =========================
    PROFILE SIDEBAR
    ========================= */
 
-.profile-card {
+        .profile-card {
 
-    display: flex;
+            display: flex;
 
-    flex-direction: column;
-}
+            flex-direction: column;
+        }
 
-.profile-top {
+        .profile-top {
 
-    text-align: center;
+            text-align: center;
 
-    padding-bottom: 13px;
+            padding-bottom: 13px;
 
-    border-bottom: 1px solid #edf0f5;
-}
+            border-bottom: 1px solid #edf0f5;
+        }
 
-.profile-image {
+        .profile-image {
 
-    width: 94px;
+            width: 94px;
 
-    height: 94px;
+            height: 94px;
 
-    object-fit: cover;
+            object-fit: cover;
 
-    border-radius: 16px;
+            border-radius: 16px;
 
-    display: block;
+            display: block;
 
-    margin: 2px auto 9px;
+            margin: 2px auto 9px;
 
-    border: 4px solid white;
+            border: 4px solid white;
 
-    box-shadow:
-        0 5px 18px
-        rgba(30,41,70,0.14);
-}
+            box-shadow:
+                0 5px 18px rgba(30, 41, 70, 0.14);
+        }
 
-.profile-name {
+        .profile-name {
 
-    font-size: 13px;
+            font-size: 13px;
 
-    font-weight: 700;
-}
+            font-weight: 700;
+        }
 
-.profile-role {
+        .profile-role {
 
-    margin-top: 3px;
+            margin-top: 3px;
 
-    color: #8a94a6;
+            color: #8a94a6;
 
-    font-size: 10px;
-}
+            font-size: 10px;
+        }
 
-.profile-note {
+        .profile-note {
 
-    margin-top: 12px;
+            margin-top: 12px;
 
-    padding: 9px;
+            padding: 9px;
 
-    border-radius: 9px;
+            border-radius: 9px;
 
-    background: #f8fafc;
+            background: #f8fafc;
 
-    color: #6b7280;
+            color: #6b7280;
 
-    font-size: 9px;
+            font-size: 9px;
 
-    line-height: 1.4;
+            line-height: 1.4;
 
-    text-align: left;
-}
+            text-align: left;
+        }
 
 
-/* =========================
+        /* =========================
    LOWER INFORMATION
    ========================= */
 
-.bottom-grid {
+        .bottom-grid {
 
-    display: grid;
+            display: grid;
 
-    grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr;
 
-    gap: 12px;
+            gap: 12px;
 
-    margin-top: 2px;
-}
+            margin-top: 2px;
+        }
 
 
-/* =========================
+        /* =========================
    PRIVACY NOTICE
    ========================= */
 
-.privacy-strip {
+        .privacy-strip {
 
-    margin-top: 14px;
+            margin-top: 14px;
 
-    padding: 10px 13px;
+            padding: 10px 13px;
 
-    border-radius: 10px;
+            border-radius: 10px;
 
-    background: #f7f8ff;
+            background: #f7f8ff;
 
-    border: 1px solid #e6e7ff;
+            border: 1px solid #e6e7ff;
 
-    display: flex;
+            display: flex;
 
-    align-items: center;
+            align-items: center;
 
-    gap: 9px;
+            gap: 9px;
 
-    color: #596178;
+            color: #596178;
 
-    font-size: 9px;
-}
+            font-size: 9px;
+        }
 
-.privacy-icon {
+        .privacy-icon {
 
-    width: 24px;
+            width: 24px;
 
-    height: 24px;
+            height: 24px;
 
-    border-radius: 7px;
+            border-radius: 7px;
 
-    display: flex;
+            display: flex;
 
-    align-items: center;
+            align-items: center;
 
-    justify-content: center;
+            justify-content: center;
 
-    background: #ecebff;
+            background: #ecebff;
 
-    color: #635bff;
+            color: #635bff;
 
-    font-size: 12px;
+            font-size: 12px;
 
-    flex-shrink: 0;
-}
+            flex-shrink: 0;
+        }
 
 
-/* =========================
+        /* =========================
    SUBMIT
    ========================= */
 
-.action-row {
+        .action-row {
 
-    margin-top: 14px;
+            margin-top: 14px;
 
-    display: flex;
+            display: flex;
 
-    align-items: center;
+            align-items: center;
 
-    justify-content: space-between;
+            justify-content: space-between;
 
-    gap: 14px;
-}
+            gap: 14px;
+        }
 
-.dummy-note {
+        .dummy-note {
 
-    color: #98a0af;
+            color: #98a0af;
 
-    font-size: 9px;
+            font-size: 9px;
 
-    line-height: 1.35;
+            line-height: 1.35;
 
-    max-width: 550px;
-}
+            max-width: 550px;
+        }
 
-button {
+        button {
 
-    border: none;
+            border: none;
 
-    min-width: 190px;
+            min-width: 190px;
 
-    padding: 11px 18px;
+            padding: 11px 18px;
 
-    border-radius: 9px;
+            border-radius: 9px;
 
-    background:
-        linear-gradient(
-            100deg,
-            #635bff,
-            #3977ff
-        );
+            background:
+                linear-gradient(100deg,
+                    #635bff,
+                    #3977ff);
 
-    color: white;
+            color: white;
 
-    font-family: inherit;
+            font-family: inherit;
 
-    font-size: 11px;
+            font-size: 11px;
 
-    font-weight: 700;
+            font-weight: 700;
 
-    cursor: pointer;
+            cursor: pointer;
 
-    box-shadow:
-        0 7px 18px
-        rgba(70,88,220,0.23);
+            box-shadow:
+                0 7px 18px rgba(70, 88, 220, 0.23);
 
-    transition:
-        transform .15s,
-        box-shadow .15s;
-}
+            transition:
+                transform .15s,
+                box-shadow .15s;
+        }
 
-button:hover {
+        button:hover {
 
-    transform: translateY(-1px);
+            transform: translateY(-1px);
 
-    box-shadow:
-        0 10px 22px
-        rgba(70,88,220,0.28);
-}
+            box-shadow:
+                0 10px 22px rgba(70, 88, 220, 0.28);
+        }
 
 
-/* =========================
+        /* =========================
    RESPONSIVE
    ========================= */
 
-@media (max-width: 850px) {
+        @media (max-width: 850px) {
 
-    .page {
-        width: 94%;
-    }
+            .page {
+                width: 94%;
+            }
 
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
 
-    .profile-card {
-        display: none;
-    }
+            .profile-card {
+                display: none;
+            }
 
-}
-
-</style>
+        }
+    </style>
 
 </head>
 
@@ -708,405 +688,96 @@ button:hover {
 <body>
 
 
-<!-- =========================
+    <!-- =========================
      NAVIGATION
      ========================= -->
 
-<nav class="navbar">
+    <nav class="navbar">
 
-    <div class="brand">
+        <div class="brand">
 
-        <div class="brand-icon">
-            TS
+            <div class="brand-icon">
+                TS
+            </div>
+
+            TalentFlow
+
         </div>
 
-        TalentFlow
 
-    </div>
+        <div class="nav-right">
 
+            <span>
+                Candidate Portal
+            </span>
 
-    <div class="nav-right">
+            <div class="secure-badge">
+                🔒 Secure Application
+            </div>
 
-        <span>
-            Candidate Portal
-        </span>
-
-        <div class="secure-badge">
-            🔒 Secure Application
         </div>
 
-    </div>
-
-</nav>
+    </nav>
 
 
-<!-- =========================
+    <!-- =========================
      PAGE
      ========================= -->
 
-<main class="page">
+    <main class="page">
 
 
-    <!-- JOB HEADER -->
+        <!-- JOB HEADER -->
 
-    <section class="job-header">
+        <section class="job-header">
 
-        <div class="job-info">
+            <div class="job-info">
 
-            <div class="company-logo">
-                TF
-            </div>
-
-            <div>
-
-                <h1 class="job-title">
-                    Software Engineering Intern
-                </h1>
-
-                <div class="company">
-                    TalentFlow Technologies · Pune, India
+                <div class="company-logo">
+                    TF
                 </div>
-
-                <div class="job-meta">
-
-                    <span class="tag">
-                        Full-time
-                    </span>
-
-                    <span class="tag">
-                        Hybrid
-                    </span>
-
-                    <span class="tag">
-                        Engineering
-                    </span>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="application-status">
-
-            Application Progress
-
-            <div class="progress">
-                <div class="progress-bar"></div>
-            </div>
-
-            <div style="margin-top:4px;">
-                Step 2 of 3
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- MAIN FORM -->
-
-    <div class="form-grid">
-
-
-        <!-- LEFT -->
-
-        <div>
-
-
-            <!-- PERSONAL INFORMATION -->
-
-            <section class="card">
-
-                <div class="card-header">
-
-                    <div>
-
-                        <h2 class="card-title">
-                            Personal Information
-                        </h2>
-
-                        <p class="card-description">
-                            Tell us how we can contact you.
-                        </p>
-
-                    </div>
-
-                    <span class="required">
-                        * Required
-                    </span>
-
-                </div>
-
-
-                <div class="field-row">
-
-
-                    <div class="field">
-
-                        <label for="fullName">
-                            Full Name
-                        </label>
-
-                        <input
-                            id="fullName"
-                            name="fullName"
-                            type="text"
-                            autocomplete="name"
-                            placeholder="Enter your full name"
-                            value="Rahul Sharma"
-                        >
-
-                    </div>
-
-
-                    <div class="field">
-
-                        <label for="email">
-                            Email Address
-                        </label>
-
-                        <input
-                            id="email"
-                            name="email"
-                            type="email"
-                            autocomplete="email"
-                            placeholder="Enter your email"
-                            value="rahul@example.com"
-                        >
-
-                    </div>
-
-
-                    <div class="field">
-
-                        <label for="phone">
-                            Phone Number
-                        </label>
-
-                        <input
-                            id="phone"
-                            name="phone"
-                            type="tel"
-                            autocomplete="tel"
-                            placeholder="Enter mobile number"
-                            value="9876543210"
-                        >
-
-                    </div>
-
-
-                    <div class="field">
-
-                        <label for="pan">
-                            PAN / Government ID
-                        </label>
-
-                        <input
-                            id="pan"
-                            name="pan"
-                            type="text"
-                            autocomplete="off"
-                            placeholder="Enter PAN or ID"
-                            value="ABCDE1234F"
-                        >
-
-                    </div>
-
-
-                </div>
-
-
-                <div class="field">
-
-                    <label for="address">
-                        Current Address
-                    </label>
-
-                    <textarea
-                        id="address"
-                        name="address"
-                        autocomplete="street-address"
-                        placeholder="Enter your address"
-                    >Pune, Maharashtra</textarea>
-
-                </div>
-
-
-                <div class="field" style="margin-bottom:0;">
-
-                    <label for="password">
-                        Account Password
-                    </label>
-
-                    <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        autocomplete="new-password"
-                        value="VisionShield123"
-                    >
-
-                </div>
-
-            </section>
-
-
-            <!-- EDUCATION / EXPERIENCE -->
-
-            <div class="bottom-grid">
-
-                <section class="card">
-
-                    <div class="card-header">
-
-                        <div>
-
-                            <h2 class="card-title">
-                                Education
-                            </h2>
-
-                            <p class="card-description">
-                                Academic background
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    <div class="field" style="margin-bottom:0;">
-
-                        <label for="education">
-                            Highest Qualification
-                        </label>
-
-                        <input
-                            id="education"
-                            name="education"
-                            type="text"
-                            value="B.Tech Computer Engineering"
-                        >
-
-                    </div>
-
-                </section>
-
-
-                <section class="card">
-
-                    <div class="card-header">
-
-                        <div>
-
-                            <h2 class="card-title">
-                                Experience
-                            </h2>
-
-                            <p class="card-description">
-                                Professional experience
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    <div class="field" style="margin-bottom:0;">
-
-                        <label for="experience">
-                            Total Experience
-                        </label>
-
-                        <input
-                            id="experience"
-                            name="experience"
-                            type="text"
-                            value="2 Years"
-                        >
-
-                    </div>
-
-                </section>
-
-            </div>
-
-
-        </div>
-
-
-        <!-- RIGHT PROFILE -->
-
-        <section class="card profile-card">
-
-            <div class="card-header">
 
                 <div>
 
-                    <h2 class="card-title">
-                        Candidate Profile
-                    </h2>
+                    <h1 class="job-title">
+                        Software Engineering Intern
+                    </h1>
 
-                    <p class="card-description">
-                        Profile photo
-                    </p>
+                    <div class="company">
+                        TalentFlow Technologies · Pune, India
+                    </div>
+
+                    <div class="job-meta">
+
+                        <span class="tag">
+                            Full-time
+                        </span>
+
+                        <span class="tag">
+                            Hybrid
+                        </span>
+
+                        <span class="tag">
+                            Engineering
+                        </span>
+
+                    </div>
 
                 </div>
 
             </div>
 
 
-            <div class="profile-top">
+            <div class="application-status">
 
-                <img
-                    class="profile-image"
-                    src="https://images.unsplash.com/photo-1633332755192-727a05c4013d"
-                    alt="Demo Candidate Profile photo"
-                >
+                Application Progress
 
-                <div class="profile-name">
-                    Rahul Sharma
+                <div class="progress">
+                    <div class="progress-bar"></div>
                 </div>
 
-                <div class="profile-role">
-                    Software Engineering Candidate
-                </div>
-
-            </div>
-
-
-            <div class="profile-note">
-
-                <strong>Visual content</strong><br>
-
-                This image is intentionally included
-                for VisionShield's local visual privacy
-                detection demonstration.
-
-            </div>
-
-
-            <div style="
-                margin-top:auto;
-                padding-top:12px;
-            ">
-
-                <div style="
-                    font-size:9px;
-                    color:#8a94a6;
-                    margin-bottom:6px;
-                ">
-                    Application ID
-                </div>
-
-                <div style="
-                    font-size:10px;
-                    font-weight:650;
-                    color:#475569;
-                    background:#f8fafc;
-                    padding:8px 9px;
-                    border-radius:7px;
-                ">
-                    TF-2026-004821
+                <div style="margin-top:4px;">
+                    Step 2 of 3
                 </div>
 
             </div>
@@ -1114,55 +785,332 @@ button:hover {
         </section>
 
 
-    </div>
+        <!-- MAIN FORM -->
+
+        <div class="form-grid">
 
 
-    <!-- PRIVACY NOTICE -->
+            <!-- LEFT -->
 
-    <div class="privacy-strip">
+            <div>
 
-        <div class="privacy-icon">
-            🔐
+
+                <!-- PERSONAL INFORMATION -->
+
+                <section class="card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h2 class="card-title">
+                                Personal Information
+                            </h2>
+
+                            <p class="card-description">
+                                Tell us how we can contact you.
+                            </p>
+
+                        </div>
+
+                        <span class="required">
+                            * Required
+                        </span>
+
+                    </div>
+
+
+                    <div class="field-row">
+
+
+                        <div class="field">
+
+                            <label for="fullName">
+                                Full Name
+                            </label>
+
+                            <input id="fullName" name="fullName" type="text" autocomplete="name"
+                                placeholder="Enter your full name" value="Rahul Sharma">
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="email">
+                                Email Address
+                            </label>
+
+                            <input id="email" name="email" type="email" autocomplete="email"
+                                placeholder="Enter your email" value="rahul@example.com">
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="phone">
+                                Phone Number
+                            </label>
+
+                            <input id="phone" name="phone" type="tel" autocomplete="tel"
+                                placeholder="Enter mobile number" value="9876543210">
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="pan">
+                                PAN / Government ID
+                            </label>
+
+                            <input id="pan" name="pan" type="text" autocomplete="off" placeholder="Enter PAN or ID"
+                                value="ABCDE1234F">
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="address">
+                            Current Address
+                        </label>
+
+                        <textarea id="address" name="address" autocomplete="street-address"
+                            placeholder="Enter your address">Pune, Maharashtra</textarea>
+
+                    </div>
+
+
+                    <div class="field" style="margin-bottom:0;">
+
+                        <label for="password">
+                            Account Password
+                        </label>
+
+                        <input id="password" name="password" type="password" autocomplete="new-password"
+                            value="VisionShield123">
+
+                    </div>
+
+                </section>
+
+
+                <!-- EDUCATION / EXPERIENCE -->
+
+                <div class="bottom-grid">
+
+                    <section class="card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <h2 class="card-title">
+                                    Education
+                                </h2>
+
+                                <p class="card-description">
+                                    Academic background
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="field" style="margin-bottom:0;">
+
+                            <label for="education">
+                                Highest Qualification
+                            </label>
+
+                            <input id="education" name="education" type="text" value="B.Tech Computer Engineering">
+
+                        </div>
+
+                    </section>
+
+
+                    <section class="card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <h2 class="card-title">
+                                    Experience
+                                </h2>
+
+                                <p class="card-description">
+                                    Professional experience
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="field" style="margin-bottom:0;">
+
+                            <label for="experience">
+                                Total Experience
+                            </label>
+
+                            <input id="experience" name="experience" type="text" value="2 Years">
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- RIGHT PROFILE -->
+
+            <section class="card profile-card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h2 class="card-title">
+                            Candidate Profile
+                        </h2>
+
+                        <p class="card-description">
+                            Profile photo
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="profile-top">
+
+                    <img class="profile-image" src="https://images.unsplash.com/photo-1633332755192-727a05c4013d"
+                        alt="Demo Candidate Profile photo">
+
+                    <div class="profile-name">
+                        Rahul Sharma
+                    </div>
+
+                    <div class="profile-role">
+                        Software Engineering Candidate
+                    </div>
+
+                </div>
+
+
+                <div class="profile-note">
+
+                    <strong>Visual content</strong><br>
+
+                    This image is intentionally included
+                    for VisionShield's local visual privacy
+                    detection demonstration.
+
+                </div>
+
+
+                <div style="
+                margin-top:auto;
+                padding-top:12px;
+            ">
+
+                    <div style="
+                    font-size:9px;
+                    color:#8a94a6;
+                    margin-bottom:6px;
+                ">
+                        Application ID
+                    </div>
+
+                    <div style="
+                    font-size:10px;
+                    font-weight:650;
+                    color:#475569;
+                    background:#f8fafc;
+                    padding:8px 9px;
+                    border-radius:7px;
+                ">
+                        TF-2026-004821
+                    </div>
+
+                </div>
+
+            </section>
+
+
         </div>
 
-        <div>
 
-            <strong>
-                Your information matters.
-            </strong>
+        <!-- PRIVACY NOTICE -->
 
-            Sensitive information on this page is
-            protected by the VisionShield privacy layer
-            before it can be shared with external services.
+        <div class="privacy-strip">
 
-        </div>
+            <div class="privacy-icon">
+                🔐
+            </div>
 
-    </div>
+            <div>
 
+                <strong>
+                    Your information matters.
+                </strong>
 
-    <!-- ACTION -->
+                Sensitive information on this page is
+                protected by the VisionShield privacy layer
+                before it can be shared with external services.
 
-    <div class="action-row">
-
-        <div class="dummy-note">
-
-            Demo environment · All personal information shown
-            on this page is synthetic and intended only for
-            VisionShield testing.
+            </div>
 
         </div>
 
 
-        <button type="button">
+        <!-- ACTION -->
 
-            Submit Application&nbsp; →
+        <div class="action-row">
 
-        </button>
+            <div class="dummy-note">
 
-    </div>
+                Demo environment · All personal information shown
+                on this page is synthetic and intended only for
+                VisionShield testing.
+
+            </div>
 
 
-</main>
+            <button type="button" id="submitApplicationBtn">
+
+                Submit Application&nbsp; →
+
+            </button>
+
+            <script>
+
+                document
+
+                    .getElementById("submitApplicationBtn")
+
+                    .addEventListener("click", () => {
+
+                        alert("Application submitted successfully.");
+
+                    });
+
+            </script>
+
+        </div>
+
+
+    </main>
 
 
 </body>

@@ -20,23 +20,23 @@ chrome.runtime.onMessage.addListener(
                 detections
             );
 
-//             const protectedImages = redactSensitiveImages();
+            //             const protectedImages = redactSensitiveImages();
 
-// console.log(
-//     "VisionShield: Protected images:",
-//     protectedImages
-// );
+            // console.log(
+            //     "VisionShield: Protected images:",
+            //     protectedImages
+            // );
 
             const imageDetections = detectImagesForRedaction();
 
-console.log(
-    "VisionShield image detections:",
-    imageDetections
-);
+            console.log(
+                "VisionShield image detections:",
+                imageDetections
+            );
 
             const cleanResults = detections.map(item => {
 
-                redactElement(item.element,item.type);
+                redactElement(item.element, item.type);
 
                 const rect = item.element.getBoundingClientRect();
 
@@ -55,40 +55,40 @@ console.log(
                     }
                 };
             });
-            
+
             console.log(
                 "VisionShield redaction zones:",
                 cleanResults
             );
 
-//             imageDetections.forEach((image, index) => {
-//     const overlay = document.createElement("div");
+            //             imageDetections.forEach((image, index) => {
+            //     const overlay = document.createElement("div");
 
-//     overlay.className = "VisionShield-vision-overlay";
+            //     overlay.className = "VisionShield-vision-overlay";
 
-//     overlay.style.position = "absolute";
-//     overlay.style.left =
-//         `${image.rect.x + window.scrollX}px`;
-//     overlay.style.top =
-//         `${image.rect.y + window.scrollY}px`;
-//     overlay.style.width =
-//         `${image.rect.width}px`;
-//     overlay.style.height =
-//         `${image.rect.height}px`;
+            //     overlay.style.position = "absolute";
+            //     overlay.style.left =
+            //         `${image.rect.x + window.scrollX}px`;
+            //     overlay.style.top =
+            //         `${image.rect.y + window.scrollY}px`;
+            //     overlay.style.width =
+            //         `${image.rect.width}px`;
+            //     overlay.style.height =
+            //         `${image.rect.height}px`;
 
-//     overlay.style.background = "black";
-//     overlay.style.opacity = "0.95";
-//     overlay.style.zIndex = "2147483647";
-//     overlay.style.pointerEvents = "none";
-//     overlay.style.boxSizing = "border-box";
+            //     overlay.style.background = "black";
+            //     overlay.style.opacity = "0.95";
+            //     overlay.style.zIndex = "2147483647";
+            //     overlay.style.pointerEvents = "none";
+            //     overlay.style.boxSizing = "border-box";
 
-//     document.body.appendChild(overlay);
+            //     document.body.appendChild(overlay);
 
-//     console.log(
-//         `VisionShield: Image ${index + 1} redacted`,
-//         image.rect
-//     );
-// });
+            //     console.log(
+            //         `VisionShield: Image ${index + 1} redacted`,
+            //         image.rect
+            //     );
+            // });
 
             const sanitizedDOM = detections.map((item, index) => {
                 return {
@@ -106,7 +106,7 @@ console.log(
             sendResponse({
 
                 success: true,
-                
+
                 redactionComplete: true,
 
                 detections: cleanResults,
@@ -153,8 +153,83 @@ console.log(
 chrome.runtime.onMessage.addListener(
     (message, sender, sendResponse) => {
 
-        if (message.action !== "REDACT_VISION_DETECTIONS") {
-            return;
+        if (message.action === "EXECUTE_AGENT_ACTION") {
+
+            console.log(
+                "VisionShield: Received agent action:",
+                message.agentAction
+            );
+
+            try {
+
+                const agentAction = message.agentAction;
+
+                if (!agentAction) {
+
+                    sendResponse({
+                        success: false,
+                        error: "No agent action received"
+                    });
+
+                    return true;
+                }
+
+                if (
+                    agentAction.type === "CLICK" &&
+                    agentAction.target === "submit"
+                ) {
+
+                    // Temporary: use the existing demo button.
+                    const submitButton =
+                        document.querySelector(
+                            'button[type="submit"], button'
+                        );
+
+                    if (!submitButton) {
+
+                        sendResponse({
+                            success: false,
+                            error: "Submit button not found"
+                        });
+
+                        return true;
+                    }
+
+                    console.log(
+                        "VisionShield: Agent clicking:",
+                        submitButton
+                    );
+
+                    submitButton.click();
+
+                    sendResponse({
+                        success: true,
+                        executed: "CLICK",
+                        target: "submit"
+                    });
+
+                    return true;
+                }
+
+                sendResponse({
+                    success: false,
+                    error: "Unsupported agent action"
+                });
+
+            } catch (error) {
+
+                console.error(
+                    "VisionShield agent execution error:",
+                    error
+                );
+
+                sendResponse({
+                    success: false,
+                    error: error.message
+                });
+            }
+
+            return true;
         }
 
         console.log(
