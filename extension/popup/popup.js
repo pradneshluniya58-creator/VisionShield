@@ -27,9 +27,50 @@ const visionWorker =
         }
     );
 
-    let lastSanitizedDOM = [];
+let lastSanitizedDOM = [];
 
-    // Preload the vision model in the background
+const scanView = document.getElementById("scanView");
+const scanSteps = document.getElementById("scanSteps");
+const resultArea = document.getElementById("resultArea");
+
+const scanCircle = document.querySelector(".scan-circle");
+const scanTitle = document.querySelector(".scan-title");
+const scanDescription = document.querySelector(".scan-description");
+
+const stepPII = document.getElementById("stepPII");
+const stepVisual = document.getElementById("stepVisual");
+const stepProtect = document.getElementById("stepProtect");
+const stepVerify = document.getElementById("stepVerify");
+
+const scanAgainBtn = document.getElementById("scanAgainBtn");
+
+
+function updateScanStep(activeStep) {
+
+    const steps = [
+        stepPII,
+        stepVisual,
+        stepProtect,
+        stepVerify
+    ];
+
+    steps.forEach((step, index) => {
+
+        step.classList.remove("active");
+        step.classList.remove("done");
+
+        if (index < activeStep) {
+            step.classList.add("done");
+        }
+
+        if (index === activeStep) {
+            step.classList.add("active");
+        }
+
+    });
+}
+
+// Preload the vision model in the background
 
 
 console.log(
@@ -54,256 +95,337 @@ visionWorker.addEventListener(
         );
 
         // =================================================
-// VISION DETECTION RESULT
-// =================================================
+        // VISION DETECTION RESULT
+        // =================================================
 
-if (event.data.type === "RESULT") {
+        if (event.data.type === "RESULT") {
 
-    const visualDetections =
-        event.data.output || [];
+            const visualDetections =
+                event.data.output || [];
 
-    const imageWidth =
-        event.data.imageWidth;
+            const imageWidth =
+                event.data.imageWidth;
 
-    const imageHeight =
-        event.data.imageHeight;
-
-
-    console.log(
-        "📐 Vision screenshot dimensions:",
-        imageWidth,
-        "x",
-        imageHeight
-    );
+            const imageHeight =
+                event.data.imageHeight;
 
 
-    console.log(
-        "🔍 Vision detections:",
-        JSON.stringify(
-            visualDetections,
-            null,
-            2
-        )
-    );
+            console.log(
+                "📐 Vision screenshot dimensions:",
+                imageWidth,
+                "x",
+                imageHeight
+            );
 
 
-    // ---------------------------------------------
-    // Get the active tab
-    // ---------------------------------------------
-
-    const [tab] =
-        await chrome.tabs.query({
-            active: true,
-            currentWindow: true
-        });
-
-
-    if (!tab || !tab.id) {
-
-        console.error(
-            "❌ No active tab for visual redaction"
-        );
-
-        return;
-    }
+            console.log(
+                "🔍 Vision detections:",
+                JSON.stringify(
+                    visualDetections,
+                    null,
+                    2
+                )
+            );
 
 
-    // ---------------------------------------------
-    // Send visual detections to content script
-    // ---------------------------------------------
+            // ---------------------------------------------
+            // Get the active tab
+            // ---------------------------------------------
 
-    try {
+            const [tab] =
+                await chrome.tabs.query({
+                    active: true,
+                    currentWindow: true
+                });
 
-        const redactionResponse =
-            await chrome.tabs.sendMessage(
-                tab.id,
-                {
-                    action:
-                        "REDACT_VISION_DETECTIONS",
 
-                    detections:
-                        visualDetections,
+            if (!tab || !tab.id) {
 
-                    imageWidth:
-                        imageWidth,
+                console.error(
+                    "❌ No active tab for visual redaction"
+                );
 
-                    imageHeight:
-                        imageHeight
+                return;
+            }
+
+
+            // ---------------------------------------------
+            // Send visual detections to content script
+            // ---------------------------------------------
+
+            try {
+                updateScanStep(2);
+                const redactionResponse =
+                    await chrome.tabs.sendMessage(
+                        tab.id,
+                        {
+                            action:
+                                "REDACT_VISION_DETECTIONS",
+
+                            detections:
+                                visualDetections,
+
+                            imageWidth:
+                                imageWidth,
+
+                            imageHeight:
+                                imageHeight
+                        }
+                    );
+
+
+                console.log(
+                    "🛡️ Visual redaction response:",
+                    redactionResponse
+                );
+
+
+                console.log(
+                    "🛡️ VISUAL REDACTION RESPONSE EXACT:",
+                    JSON.stringify(
+                        redactionResponse,
+                        null,
+                        2
+                    )
+                );
+
+
+                if (
+                    !redactionResponse ||
+                    !redactionResponse.success
+                ) {
+
+                    console.warn(
+                        "⚠️ Visual redaction did not complete"
+                    );
+
+                    privacyStatus.textContent =
+                        "ERROR";
+
+                    return;
                 }
-            );
 
 
-        console.log(
-            "🛡️ Visual redaction response:",
-            redactionResponse
-        );
+                console.log(
+                    "✅ Visual regions redacted successfully"
+                );
 
 
-        console.log(
-            "🛡️ VISUAL REDACTION RESPONSE EXACT:",
-            JSON.stringify(
-                redactionResponse,
-                null,
-                2
-            )
-        );
+                // =================================================
+                // FINAL SANITIZED SCREENSHOT
+                // Capture AFTER visual redaction
+                // =================================================
+
+                startBtn.textContent =
+                    "⏳  Capturing final protected page...";
+
+                privacyStatus.textContent =
+                    "PROTECTING";
+
+                screenshotStatus.textContent =
+                    "Capturing final sanitized screenshot...";
 
 
-        if (
-            !redactionResponse ||
-            !redactionResponse.success
-        ) {
+                console.log(
+                    "VisionShield: Capturing FINAL screenshot AFTER visual redaction..."
+                );
 
-            console.warn(
-                "⚠️ Visual redaction did not complete"
-            );
 
-            privacyStatus.textContent =
-                "ERROR";
+                const finalScreenshotResponse =
+                    await chrome.runtime.sendMessage({
 
-            return;
+                        action:
+                            "CAPTURE_SCREENSHOT",
+
+                        windowId:
+                            tab.windowId
+
+                    });
+
+
+                console.log(
+                    "FINAL SCREENSHOT RESPONSE:",
+                    finalScreenshotResponse
+                );
+
+
+                // ---------------------------------------------
+                // Check final screenshot
+                // ---------------------------------------------
+
+                if (
+                    !finalScreenshotResponse ||
+                    !finalScreenshotResponse.success
+                ) {
+
+                    throw new Error(
+                        finalScreenshotResponse?.error ||
+                        "Unable to capture final sanitized screenshot"
+                    );
+                }
+
+
+                // ---------------------------------------------
+                // Display final sanitized screenshot
+                // ---------------------------------------------
+
+                screenshotPreview.src =
+                    finalScreenshotResponse.dataUrl;
+
+
+                screenshotPreview.classList.remove(
+                    "hidden"
+                );
+
+
+                screenshotStatus.textContent =
+                    "Final sanitized screenshot captured";
+
+
+                console.log(
+                    "VisionShield: FINAL sanitized screenshot captured."
+                );
+                updateScanStep(3);
+
+
+                // ---------------------------------------------
+                // Create FINAL sanitized payload
+                // ---------------------------------------------
+
+                const finalSanitizedPayload = {
+
+                    sanitized_image:
+                        finalScreenshotResponse.dataUrl,
+
+                    sanitized_dom:
+                        lastSanitizedDOM,
+
+                    visual_redactions:
+                        redactionResponse.redactedCount,
+
+                    rawPIIUploaded:
+                        0
+
+                };
+
+                // =====================================================
+                // SEND FINAL SANITIZED DATA TO BACKEND
+                // =====================================================
+
+                console.log(
+                    "VisionShield: Sending FINAL sanitized data to backend..."
+                );
+
+                const privacyResponse = await fetch(
+                    "http://127.0.0.1:5000/receive-sanitized",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify(
+                            finalSanitizedPayload
+                        )
+                    }
+                );
+
+                if (!privacyResponse.ok) {
+                    throw new Error(
+                        "Backend rejected final sanitized data"
+                    );
+                }
+
+                const privacyResult =
+                    await privacyResponse.json();
+
+                console.log(
+                    "VisionShield privacy verification:",
+                    privacyResult
+                );
+
+                const agentResponse = await fetch(
+                    "http://127.0.0.1:5000/agent",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            task: "Review this application and submit it.",
+                            sanitized_dom: lastSanitizedDOM,
+                            sanitized_image: finalScreenshotResponse.dataUrl,
+                            visual_redactions: redactionResponse.redactedCount
+                        })
+                    }
+                );
+
+                const agentResult = await agentResponse.json();
+
+                console.log(
+                    "VisionShield agent decision:",
+                    agentResult
+                );
+
+                const agentExecution = await chrome.tabs.sendMessage(
+                    tab.id,
+                    {
+                        action: "EXECUTE_AGENT_ACTION",
+                        agentAction: agentResult.action
+                    }
+                );
+
+                console.log(
+                    "VisionShield agent execution:",
+                    agentExecution
+                );
+
+
+                console.log(
+                    "VisionShield: FINAL sanitized payload created:",
+                    JSON.stringify(
+                        finalSanitizedPayload,
+                        null,
+                        2
+                    )
+                );
+
+
+                privacyStatus.textContent =
+                    "VERIFIED";
+
+                updateScanStep(4);
+
+                setTimeout(() => {
+                    scanView.style.display = "none";
+                    resultArea.style.display = "block";
+                }, 400);
+
+
+                console.log(
+                    "🛡️ VisionShield: Privacy protection VERIFIED"
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "❌ Vision visual redaction/final screenshot error:",
+                    error
+                );
+
+                privacyStatus.textContent =
+                    "ERROR";
+
+                screenshotStatus.textContent =
+                    "Final sanitization failed";
+
+            }
+
         }
 
 
-        console.log(
-            "✅ Visual regions redacted successfully"
-        );
 
-
-        // =================================================
-        // FINAL SANITIZED SCREENSHOT
-        // Capture AFTER visual redaction
-        // =================================================
-
-        startBtn.textContent =
-            "⏳  Capturing final protected page...";
-
-        privacyStatus.textContent =
-            "PROTECTING";
-
-        screenshotStatus.textContent =
-            "Capturing final sanitized screenshot...";
-
-
-        console.log(
-            "VisionShield: Capturing FINAL screenshot AFTER visual redaction..."
-        );
-
-
-        const finalScreenshotResponse =
-            await chrome.runtime.sendMessage({
-
-                action:
-                    "CAPTURE_SCREENSHOT",
-
-                windowId:
-                    tab.windowId
-
-            });
-
-
-        console.log(
-            "FINAL SCREENSHOT RESPONSE:",
-            finalScreenshotResponse
-        );
-
-
-        // ---------------------------------------------
-        // Check final screenshot
-        // ---------------------------------------------
-
-        if (
-            !finalScreenshotResponse ||
-            !finalScreenshotResponse.success
-        ) {
-
-            throw new Error(
-                finalScreenshotResponse?.error ||
-                "Unable to capture final sanitized screenshot"
-            );
-        }
-
-
-        // ---------------------------------------------
-        // Display final sanitized screenshot
-        // ---------------------------------------------
-
-        screenshotPreview.src =
-            finalScreenshotResponse.dataUrl;
-
-
-        screenshotPreview.classList.remove(
-            "hidden"
-        );
-
-
-        screenshotStatus.textContent =
-            "Final sanitized screenshot captured";
-
-
-        console.log(
-            "VisionShield: FINAL sanitized screenshot captured."
-        );
-
-
-        // ---------------------------------------------
-        // Create FINAL sanitized payload
-        // ---------------------------------------------
-
-        const finalSanitizedPayload = {
-
-            sanitized_image:
-                finalScreenshotResponse.dataUrl,
-
-            sanitized_dom:
-    lastSanitizedDOM,
-
-            visual_redactions:
-                redactionResponse.redactedCount,
-
-            rawPIIUploaded:
-                0
-
-        };
-
-
-        console.log(
-            "VisionShield: FINAL sanitized payload created:",
-            JSON.stringify(
-                finalSanitizedPayload,
-                null,
-                2
-            )
-        );
-
-
-        privacyStatus.textContent =
-            "VERIFIED";
-
-
-        console.log(
-            "🛡️ VisionShield: Privacy protection VERIFIED"
-        );
-
-    } catch (error) {
-
-        console.error(
-            "❌ Vision visual redaction/final screenshot error:",
-            error
-        );
-
-        privacyStatus.textContent =
-            "ERROR";
-
-        screenshotStatus.textContent =
-            "Final sanitization failed";
-
-    }
-
-}
-
-
-       
 
         // =================================================
         // VISION WORKER ERROR
@@ -355,7 +477,11 @@ visionWorker.addEventListener(
 // START BUTTON
 // =====================================================
 
-startBtn.addEventListener("click", async () => {
+async function startScan() {
+
+    // Restore scan screen for a new scan
+    scanView.style.display = "block";
+    resultArea.style.display = "none";
 
     startBtn.textContent =
         "⏳  Scanning page...";
@@ -364,6 +490,15 @@ startBtn.addEventListener("click", async () => {
 
     privacyStatus.textContent =
         "SCANNING";
+
+    scanCircle.style.display = "none";
+    scanTitle.style.display = "none";
+    scanDescription.style.display = "none";
+
+    scanSteps.style.display = "block";
+    resultArea.style.display = "none";
+
+    updateScanStep(0);
 
 
     try {
@@ -393,21 +528,6 @@ startBtn.addEventListener("click", async () => {
         );
 
 
-        await chrome.scripting.executeScript({
-
-            target: {
-                tabId: tab.id
-            },
-
-            files: [
-                "content/piiDetector.js",
-                "content/redaction.js",
-                "content/content.js"
-            ]
-
-        });
-
-
         // =====================================================
         // STEP 2: RUN DOM PII DETECTION + REDACTION
         // =====================================================
@@ -425,8 +545,8 @@ startBtn.addEventListener("click", async () => {
                 }
             );
 
-            lastSanitizedDOM =
-    response.sanitizedDOM || [];
+        lastSanitizedDOM =
+            response.sanitizedDOM || [];
 
 
         console.log(
@@ -448,7 +568,7 @@ startBtn.addEventListener("click", async () => {
         console.log(
             "VisionShield: DOM redaction completed."
         );
-
+        updateScanStep(1);
 
         // =====================================================
         // STEP 3: DISPLAY DETECTION RESULTS
@@ -511,27 +631,11 @@ startBtn.addEventListener("click", async () => {
 
         }
 
-        // =====================================================
-        // STEP 5A: CREATE SANITIZED PAYLOAD
-        // =====================================================
 
-        const sanitizedPayload = {
-            sanitized_image:
-            screenshotResponse.dataUrl,
-
-            sanitized_dom:
-            response.sanitizedDOM
-
-        };
-
-        console.log(
-            "VisionShield: Sanitized payload created:",
-            JSON.stringify(sanitizedPayload, null, 2)
-        );
 
 
         // =====================================================
-        // STEP 5: DISPLAY SANITIZED SCREENSHOT
+        // STEP 5: DISPLAY DOM-SANITIZED SCREENSHOT
         // =====================================================
 
         screenshotPreview.src =
@@ -544,21 +648,21 @@ startBtn.addEventListener("click", async () => {
 
 
         screenshotStatus.textContent =
-            "Sanitized screenshot captured";
+            "DOM-Sanitized screenshot captured";
 
 
         console.log(
-            "VisionShield: Sanitized screenshot captured."
+            "VisionShield: DOM-Sanitized screenshot captured."
         );
 
 
         // =====================================================
-        // STEP 6: SEND SANITIZED SCREENSHOT
+        // STEP 6: SEND DOM-SANITIZED SCREENSHOT
         // TO LOCAL VISION WORKER
         // =====================================================
 
         console.log(
-            "VisionShield: Sending sanitized screenshot to local vision worker..."
+            "VisionShield: Sending DOM-sanitized screenshot to local vision worker..."
         );
 
 
@@ -575,6 +679,9 @@ startBtn.addEventListener("click", async () => {
         const imageBuffer =
             await imageBlob.arrayBuffer();
 
+
+        updateScanStep(1);
+        stepVisual.querySelector(".step-icon").textContent = "●";
 
         visionWorker.postMessage(
             {
@@ -594,7 +701,7 @@ startBtn.addEventListener("click", async () => {
 
 
         console.log(
-            "VisionShield: Sanitized screenshot sent to vision worker."
+            "VisionShield: DOM-Sanitized screenshot sent to vision worker."
         );
 
 
@@ -653,7 +760,11 @@ startBtn.addEventListener("click", async () => {
         "scanning"
     );
 
-});
+}
+
+startBtn.addEventListener("click", startScan);
+
+scanAgainBtn.addEventListener("click", startScan);
 
 
 // =====================================================

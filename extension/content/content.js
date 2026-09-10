@@ -20,23 +20,23 @@ chrome.runtime.onMessage.addListener(
                 detections
             );
 
-//             const protectedImages = redactSensitiveImages();
+            //             const protectedImages = redactSensitiveImages();
 
-// console.log(
-//     "VisionShield: Protected images:",
-//     protectedImages
-// );
+            // console.log(
+            //     "VisionShield: Protected images:",
+            //     protectedImages
+            // );
 
             const imageDetections = detectImagesForRedaction();
 
-console.log(
-    "VisionShield image detections:",
-    imageDetections
-);
+            console.log(
+                "VisionShield image detections:",
+                imageDetections
+            );
 
             const cleanResults = detections.map(item => {
 
-                redactElement(item.element,item.type);
+                redactElement(item.element, item.type);
 
                 const rect = item.element.getBoundingClientRect();
 
@@ -55,40 +55,40 @@ console.log(
                     }
                 };
             });
-            
+
             console.log(
                 "VisionShield redaction zones:",
                 cleanResults
             );
 
-//             imageDetections.forEach((image, index) => {
-//     const overlay = document.createElement("div");
+            //             imageDetections.forEach((image, index) => {
+            //     const overlay = document.createElement("div");
 
-//     overlay.className = "VisionShield-vision-overlay";
+            //     overlay.className = "VisionShield-vision-overlay";
 
-//     overlay.style.position = "absolute";
-//     overlay.style.left =
-//         `${image.rect.x + window.scrollX}px`;
-//     overlay.style.top =
-//         `${image.rect.y + window.scrollY}px`;
-//     overlay.style.width =
-//         `${image.rect.width}px`;
-//     overlay.style.height =
-//         `${image.rect.height}px`;
+            //     overlay.style.position = "absolute";
+            //     overlay.style.left =
+            //         `${image.rect.x + window.scrollX}px`;
+            //     overlay.style.top =
+            //         `${image.rect.y + window.scrollY}px`;
+            //     overlay.style.width =
+            //         `${image.rect.width}px`;
+            //     overlay.style.height =
+            //         `${image.rect.height}px`;
 
-//     overlay.style.background = "black";
-//     overlay.style.opacity = "0.95";
-//     overlay.style.zIndex = "2147483647";
-//     overlay.style.pointerEvents = "none";
-//     overlay.style.boxSizing = "border-box";
+            //     overlay.style.background = "black";
+            //     overlay.style.opacity = "0.95";
+            //     overlay.style.zIndex = "2147483647";
+            //     overlay.style.pointerEvents = "none";
+            //     overlay.style.boxSizing = "border-box";
 
-//     document.body.appendChild(overlay);
+            //     document.body.appendChild(overlay);
 
-//     console.log(
-//         `VisionShield: Image ${index + 1} redacted`,
-//         image.rect
-//     );
-// });
+            //     console.log(
+            //         `VisionShield: Image ${index + 1} redacted`,
+            //         image.rect
+            //     );
+            // });
 
             const sanitizedDOM = detections.map((item, index) => {
                 return {
@@ -106,7 +106,7 @@ console.log(
             sendResponse({
 
                 success: true,
-                
+
                 redactionComplete: true,
 
                 detections: cleanResults,
@@ -153,8 +153,83 @@ console.log(
 chrome.runtime.onMessage.addListener(
     (message, sender, sendResponse) => {
 
-        if (message.action !== "REDACT_VISION_DETECTIONS") {
-            return;
+        if (message.action === "EXECUTE_AGENT_ACTION") {
+
+            console.log(
+                "VisionShield: Received agent action:",
+                message.agentAction
+            );
+
+            try {
+
+                const agentAction = message.agentAction;
+
+                if (!agentAction) {
+
+                    sendResponse({
+                        success: false,
+                        error: "No agent action received"
+                    });
+
+                    return true;
+                }
+
+                if (
+                    agentAction.type === "CLICK" &&
+                    agentAction.target === "submit"
+                ) {
+
+                    // Temporary: use the existing demo button.
+                    const submitButton =
+                        document.querySelector(
+                            'button[type="submit"], button'
+                        );
+
+                    if (!submitButton) {
+
+                        sendResponse({
+                            success: false,
+                            error: "Submit button not found"
+                        });
+
+                        return true;
+                    }
+
+                    console.log(
+                        "VisionShield: Agent clicking:",
+                        submitButton
+                    );
+
+                    submitButton.click();
+
+                    sendResponse({
+                        success: true,
+                        executed: "CLICK",
+                        target: "submit"
+                    });
+
+                    return true;
+                }
+
+                sendResponse({
+                    success: false,
+                    error: "Unsupported agent action"
+                });
+
+            } catch (error) {
+
+                console.error(
+                    "VisionShield agent execution error:",
+                    error
+                );
+
+                sendResponse({
+                    success: false,
+                    error: error.message
+                });
+            }
+
+            return true;
         }
 
         console.log(
@@ -162,161 +237,13 @@ chrome.runtime.onMessage.addListener(
             message.detections
         );
 
-        console.log(
-    "VisionShield: EXACT visual detections:",
-    JSON.stringify(message.detections, null, 2)
-);
-
         try {
 
-            const detections = message.detections || [];
-
-            const screenshotWidth =
-    message.imageWidth;
-
-const screenshotHeight =
-    message.imageHeight;
-
-    const viewportWidth =
-    window.innerWidth;
-
-const viewportHeight =
-    window.innerHeight;
-
-    const scaleX =
-    viewportWidth / screenshotWidth;
-
-const scaleY =
-    viewportHeight / screenshotHeight;
-
-    console.log(
-    "📐 Vision coordinate mapping:",
-    {
-        screenshotWidth,
-        screenshotHeight,
-        viewportWidth,
-        viewportHeight,
-        scaleX,
-        scaleY
-    }
-);
-
-            // Remove previous visual redaction overlays
-            document
-                .querySelectorAll(".VisionShield-vision-overlay")
-                .forEach(element => element.remove());
-
-                
-
-            let redactedCount = 0;
-
-            detections.forEach((detection, index) => {
-
-                const box = detection.box;
-
-                if (!box) {
-                    return;
-                }
-
-              if (detection.label === "tv") {
-    console.log(
-        "VisionShield: Ignoring non-sensitive visual object:",
-        detection.label
-    );
-    return;
-}
-
-                // =====================================================
-// ALLOWED VISUAL OBJECTS
-// Only redact objects that may contain sensitive content
-// =====================================================
-
-const allowedVisualLabels = [
-    "person",
-    "face",
-    "document",
-    "cat"
-];
-if (!allowedVisualLabels.includes(detection.label)) {
-    console.log(
-        "VisionShield: Ignoring non-sensitive visual object:",
-        {
-            label: detection.label,
-            score: detection.score
-        }
-    );
-
-    return;
-}
-
-                /*
-                 * DETR gives:
-                 *
-                 * xmin
-                 * ymin
-                 * xmax
-                 * ymax
-                 *
-                 * These coordinates are based on the screenshot.
-                 */
-
-                const overlay = document.createElement("div");
-
-                overlay.className =
-                    "VisionShield-vision-overlay";
-
-                overlay.dataset.detectionIndex = index;
-
-                overlay.style.position = "fixed";
-
-const left = box.xmin * scaleX;
-const top = box.ymin * scaleY;
-const width = (box.xmax - box.xmin) * scaleX;
-const height = (box.ymax - box.ymin) * scaleY;
-
-console.log(
-    "🎯 Vision overlay coordinates:",
-    {
-        label: detection.label,
-        screenshotBox: box,
-        screenPosition: {
-            left,
-            top,
-            width,
-            height
-        },
-        scaleX,
-        scaleY
-    }
-);
-
-overlay.style.left = `${left}px`;
-overlay.style.top = `${top}px`;
-overlay.style.width = `${width}px`;
-overlay.style.height = `${height}px`;
-
-                overlay.style.background = "black";
-                overlay.style.opacity = "0.95";
-
-                overlay.style.zIndex = "2147483647";
-
-                overlay.style.pointerEvents = "none";
-
-                overlay.style.boxSizing = "border-box";
-
-                document.body.appendChild(overlay);
-
-                redactedCount++;
-
-                console.log(
-                    `VisionShield: Visual object ${index + 1} redacted`,
-                    {
-                        label: detection.label,
-                        score: detection.score,
-                        box: detection.box
-                    }
-                );
-            });
+            const redactedCount = redactVisionDetections(
+                message.detections || [],
+                message.imageWidth,
+                message.imageHeight
+            );
 
             sendResponse({
                 success: true,
@@ -391,100 +318,4 @@ function detectImagesForRedaction() {
 
     return imageDetections;
 }
-
-// ============================================================
-// IMAGE / PROFILE PHOTO REDACTION
-// Protect visible images using their DOM bounding boxes
-// ============================================================
-
-function redactSensitiveImages() {
-
-    document
-        .querySelectorAll(".VisionShield-image-overlay")
-        .forEach(element => element.remove());
-
-    console.log("VisionShield: Checking webpage images...");
-
-    const images = document.querySelectorAll("img");
-
-    let imageCount = 0;
-
-    images.forEach((img, index) => {
-
-        const rect = img.getBoundingClientRect();
-
-        // Ignore invisible or tiny images
-        if (
-            rect.width < 50 ||
-            rect.height < 50 ||
-            rect.bottom < 0 ||
-            rect.top > window.innerHeight ||
-            rect.right < 0 ||
-            rect.left > window.innerWidth
-        ) {
-            return;
-        }
-
-        const overlay = document.createElement("div");
-
-        overlay.className = "VisionShield-image-overlay";
-
-        overlay.style.position = "fixed";
-
-overlay.style.left =
-    `${rect.left}px`;
-
-overlay.style.top =
-    `${rect.top}px`;
-
-        overlay.style.width =
-            `${rect.width}px`;
-
-        overlay.style.height =
-            `${rect.height}px`;
-
-        overlay.style.background = "black";
-        overlay.style.opacity = "0.95";
-
-        overlay.style.zIndex = "2147483647";
-        overlay.style.pointerEvents = "none";
-
-        overlay.style.boxSizing = "border-box";
-
-        document.body.appendChild(overlay);
-
-        function updateOverlayPosition() {
-    const currentRect = img.getBoundingClientRect();
-
-    overlay.style.left = `${currentRect.left}px`;
-    overlay.style.top = `${currentRect.top}px`;
-    overlay.style.width = `${currentRect.width}px`;
-    overlay.style.height = `${currentRect.height}px`;
-}
-
-window.addEventListener("scroll", updateOverlayPosition, {
-    passive: true
-});
-
-window.addEventListener("resize", updateOverlayPosition);
-
-        imageCount++;
-
-        console.log(
-            `VisionShield: Image ${index + 1} protected`,
-            {
-                width: rect.width,
-                height: rect.height
-            }
-        );
-    });
-
-    console.log(
-        "VisionShield: Total protected images:",
-        imageCount
-    );
-
-    return imageCount;
-}
-
 

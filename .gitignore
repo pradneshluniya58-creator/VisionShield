@@ -42,6 +42,6 @@ models/
 *.bin
 *.safetensors
 
-extension/vision/worker.bundle.js
+
 vision/object-test.bundle.js
 vision/object-worker.bundle.js

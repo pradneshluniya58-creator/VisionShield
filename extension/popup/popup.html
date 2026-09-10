@@ -1,505 +1,913 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>VisionShield</title>
+<meta charset="UTF-8">
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+<style>
 
-        body {
-            width: 390px;
-            min-height: 560px;
-            font-family: Inter, Arial, sans-serif;
-            background: #080b14;
-            color: #ffffff;
-        }
+* {
+    box-sizing: border-box;
+}
 
-        .app {
-            padding: 20px;
-        }
+html,
+body {
+    margin: 0;
+    width: 100%;
+    min-height: 100%;
+}
 
-        /* HEADER */
+body {
+    width: 360px;
 
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 22px;
-        }
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+    background: #090d18;
+    color: #f8fafc;
+}
 
-        .logo {
-            width: 42px;
-            height: 42px;
-            border-radius: 13px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #6c63ff, #00c6ff);
-            font-size: 21px;
-            box-shadow: 0 8px 25px rgba(70, 130, 255, 0.25);
-        }
 
-        .brand h1 {
-            font-size: 20px;
-            font-weight: 750;
-            letter-spacing: -0.5px;
-        }
+/* =========================
+   APP
+   ========================= */
 
-        .brand p {
-            color: #8d96aa;
-            font-size: 11px;
-            margin-top: 2px;
-        }
+.app {
+    padding: 18px;
+}
 
-        .status-dot {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #8d96aa;
-            font-size: 11px;
-        }
 
-        .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #35e59b;
-            box-shadow: 0 0 10px #35e59b;
-        }
+/* =========================
+   HEADER
+   ========================= */
 
-        /* HERO */
+.header {
 
-        .hero {
-            border: 1px solid #22283a;
-            border-radius: 20px;
-            padding: 20px;
-            background: linear-gradient(
-                145deg,
-                rgba(45, 51, 85, 0.55),
-                rgba(14, 18, 31, 0.9)
-            );
-            margin-bottom: 15px;
-        }
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-        .hero-label {
-            color: #9aa4bb;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 8px;
-        }
+    margin-bottom: 18px;
+}
 
-        .hero h2 {
-            font-size: 24px;
-            line-height: 1.15;
-            margin-bottom: 9px;
-        }
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
 
-        .hero p {
-            color: #9da6ba;
-            font-size: 12px;
-            line-height: 1.6;
-        }
+.logo {
 
-        /* START BUTTON */
+    width: 34px;
+    height: 34px;
 
-        .start-btn {
-            width: 100%;
-            border: none;
-            border-radius: 14px;
-            padding: 15px;
-            margin-top: 17px;
-            cursor: pointer;
-            color: white;
-            font-size: 14px;
-            font-weight: 700;
-            background: linear-gradient(90deg, #675cf6, #238dff);
-            box-shadow: 0 10px 25px rgba(67, 105, 255, 0.28);
-            transition: 0.2s ease;
-        }
+    border-radius: 10px;
 
-        .start-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 13px 30px rgba(67, 105, 255, 0.4);
-        }
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-        .start-btn:active {
-            transform: scale(0.98);
-        }
+    background:
+        linear-gradient(
+            135deg,
+            #635bff,
+            #3977ff
+        );
 
-        /* PRIVACY CARD */
+    font-size: 16px;
 
-        .privacy-card {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 15px;
-            border: 1px solid #202638;
-            background: #101522;
-            border-radius: 15px;
-            margin-bottom: 15px;
-        }
+    box-shadow:
+        0 5px 18px
+        rgba(78, 91, 255, .28);
+}
 
-        .privacy-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+.brand-text {
+    font-size: 15px;
+    font-weight: 750;
+}
 
-        .shield {
-            width: 34px;
-            height: 34px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(53, 229, 155, 0.1);
-            font-size: 17px;
-        }
+.brand-subtitle {
+    margin-top: 1px;
+    font-size: 9px;
+    color: #717b91;
+}
 
-        .privacy-title {
-            font-size: 12px;
-            font-weight: 700;
-        }
+.status-dot {
 
-        .privacy-sub {
-            color: #747e93;
-            font-size: 10px;
-            margin-top: 3px;
-        }
+    display: flex;
+    align-items: center;
+    gap: 5px;
 
-        .verified {
-            color: #35e59b;
-            font-size: 10px;
-            font-weight: 700;
-        }
+    font-size: 9px;
+    color: #7d879b;
+}
 
-        /* STATS */
+.status-dot::before {
 
-        .section-title {
-            color: #777f94;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1.4px;
-            margin: 18px 0 10px;
-        }
+    content: "";
 
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
+    width: 6px;
+    height: 6px;
 
-        .stat {
-            background: #101522;
-            border: 1px solid #202638;
-            border-radius: 14px;
-            padding: 14px 8px;
-            text-align: center;
-        }
+    border-radius: 50%;
 
-        .stat-number {
-            font-size: 21px;
-            font-weight: 750;
-        }
+    background: #35d399;
 
-        .stat-label {
-            color: #727c91;
-            font-size: 9px;
-            margin-top: 5px;
-        }
+    box-shadow:
+        0 0 8px
+        rgba(53,211,153,.8);
+}
 
-        /* DETECTION LIST */
 
-        .detection-box {
-            border: 1px solid #202638;
-            background: #101522;
-            border-radius: 15px;
-            overflow: hidden;
-        }
+/* =========================
+   MAIN SCAN AREA
+   ========================= */
 
-        .detection {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 14px;
-            border-bottom: 1px solid #1e2433;
-        }
+.scan-area {
 
-        .detection:last-child {
-            border-bottom: none;
-        }
+    height: 380px;
 
-        .detection-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    border-radius: 22px;
 
-        .detection-icon {
-            width: 27px;
-            height: 27px;
-            border-radius: 8px;
-            background: #191f2e;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
+    background:
+        radial-gradient(
+            circle at 50% 40%,
+            rgba(99,91,255,.18),
+            transparent 48%
+        ),
+        #101525;
 
-        .detection-name {
-            font-size: 11px;
-            font-weight: 600;
-        }
+    border: 1px solid #20283d;
 
-        .detection-status {
-            color: #35e59b;
-            font-size: 10px;
-            font-weight: 700;
-        }
+    position: relative;
 
-        /* SCREENSHOT */
-
-.screenshot-box {
-    border: 1px solid #202638;
-    background: #101522;
-    border-radius: 15px;
-    padding: 10px;
     overflow: hidden;
 }
 
-.screenshot-status {
-    color: #727c91;
-    font-size: 10px;
-    text-align: center;
-    margin-bottom: 8px;
-}
+#scanView {
 
-.screenshot-preview {
-    display: block;
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
     width: 100%;
-    max-height: 260px;
-    object-fit: contain;
-    border-radius: 10px;
-    border: 1px solid #202638;
-    background: #080b14;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    z-index: 10;
+
+    pointer-events: auto;
 }
-        /* FOOTER */
 
-        .footer {
-            text-align: center;
-            color: #4e5669;
-            font-size: 9px;
-            margin-top: 18px;
-        }
 
-        .hidden {
-            display: none !important;
-        }
+/* =========================
+   SCAN CIRCLE
+   ========================= */
 
-        .scanning {
-            animation: pulse 1.2s infinite;
-        }
+.scan-circle {
 
-        @keyframes pulse {
-            0% {
-                opacity: 1;
-            }
+    width: 145px;
+    height: 145px;
 
-            50% {
-                opacity: 0.5;
-            }
+    border-radius: 50%;
 
-            100% {
-                opacity: 1;
-            }
-        }
-    </style>
+    border: 1px solid
+        rgba(120,130,255,.35);
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(99,91,255,.28),
+            rgba(42,52,105,.15)
+        );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+
+    box-shadow:
+        0 0 0 10px rgba(99,91,255,.035),
+        0 0 45px rgba(99,91,255,.12);
+}
+
+.scan-circle::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 12px;
+
+    border-radius: 50%;
+
+    border: 1px solid
+        rgba(120,130,255,.18);
+
+    pointer-events: none;
+}
+
+.scan-button {
+
+    width: 105px;
+    height: 105px;
+
+    border-radius: 50%;
+
+    border: none;
+
+    position: relative;
+    z-index: 20;
+    pointer-events: auto;   
+
+    background:
+        linear-gradient(
+            145deg,
+            #6b61ff,
+            #3977ff
+        );
+
+    color: white;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 750;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 10px 30px
+        rgba(67,83,255,.35);
+
+    transition:
+        transform .2s,
+        box-shadow .2s;
+}
+
+.scan-button:hover {
+
+    transform: scale(1.035);
+
+    box-shadow:
+        0 12px 35px
+        rgba(67,83,255,.48);
+}
+
+.scan-button.scanning {
+
+    animation:
+        pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+
+    0%, 100% {
+        box-shadow:
+            0 0 0 0
+            rgba(99,91,255,.4);
+    }
+
+    50% {
+        box-shadow:
+            0 0 0 16px
+            rgba(99,91,255,0);
+    }
+
+}
+
+
+/* =========================
+   TEXT
+   ========================= */
+
+.scan-title {
+
+    margin-top: 22px;
+
+    font-size: 18px;
+
+    font-weight: 750;
+}
+
+.scan-description {
+
+    margin-top: 7px;
+
+    max-width: 270px;
+
+    color: #7e889c;
+
+    font-size: 10px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================
+   SCAN STEPS
+   ========================= */
+
+.scan-steps {
+
+    width: 100%;
+
+    margin-top: 20px;
+
+    display: none;
+
+    text-align: left;
+}
+
+.step {
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 8px 10px;
+
+    border-radius: 8px;
+
+    color: #687389;
+
+    font-size: 10px;
+}
+
+.step.active {
+
+    color: #f1f5f9;
+
+    background:
+        rgba(99,91,255,.08);
+}
+
+.step.done {
+
+    color: #7ee2b8;
+}
+
+.step-icon {
+
+    width: 16px;
+    height: 16px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #30394e;
+
+    font-size: 8px;
+}
+
+.step.active .step-icon {
+
+    border-color: #6b61ff;
+
+    animation: stepPulse 1s infinite;
+}
+
+.step.done .step-icon {
+
+    border-color: #35d399;
+
+    background: rgba(53,211,153,.12);
+}
+
+@keyframes stepPulse {
+
+    50% {
+        box-shadow:
+            0 0 0 4px
+            rgba(99,91,255,.08);
+    }
+
+}
+
+
+/* =========================
+   RESULT AREA
+   ========================= */
+
+.result-area {
+
+    display: none;
+
+    width: 100%;
+}
+
+.result-icon {
+
+    width: 66px;
+    height: 66px;
+
+    border-radius: 50%;
+
+    margin: 12px auto 13px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 27px;
+
+    background:
+        rgba(53,211,153,.10);
+
+    border:
+        1px solid
+        rgba(53,211,153,.3);
+
+    color: #35d399;
+}
+
+.result-title {
+
+    font-size: 18px;
+    font-weight: 750;
+}
+
+.result-subtitle {
+
+    margin-top: 5px;
+
+    color: #788398;
+
+    font-size: 10px;
+}
+
+
+/* =========================
+   METRICS
+   ========================= */
+
+.metrics {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 7px;
+
+    margin-top: 19px;
+}
+
+.metric {
+
+    background: #0b111f;
+
+    border: 1px solid #20283a;
+
+    border-radius: 10px;
+
+    padding: 10px 5px;
+}
+
+.metric-value {
+
+    font-size: 17px;
+
+    font-weight: 750;
+}
+
+.metric-label {
+
+    margin-top: 3px;
+
+    font-size: 7px;
+
+    color: #707b91;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+}
+
+
+/* =========================
+   PRIVACY CHECKS
+   ========================= */
+
+.checks {
+
+    margin-top: 11px;
+
+    text-align: left;
+}
+
+.check {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 8px 10px;
+
+    border-bottom: 1px solid #1c2435;
+
+    font-size: 9px;
+
+    color: #a3adbf;
+}
+
+.check:last-child {
+    border-bottom: none;
+}
+
+.check-value {
+
+    color: #35d399;
+
+    font-weight: 700;
+}
+
+
+/* =========================
+   HIDDEN ELEMENTS
+   ========================= */
+
+.hidden {
+    display: none !important;
+}
+
+
+/*
+   These elements are still required
+   by popup.js.
+*/
+
+#screenshotPreview {
+    display: none;
+}
+
+#screenshotStatus {
+    display: none;
+}
+
+#results {
+    display: none;
+}
+
+#privacyStatus {
+    display: none;
+}
+
+
+/* =========================
+   FOOTER
+   ========================= */
+
+.footer {
+
+    text-align: center;
+
+    margin-top: 14px;
+
+    font-size: 8px;
+
+    color: #4f596d;
+}
+
+</style>
+
 </head>
+
 
 <body>
 
 <div class="app">
 
-    <div class="header">
+
+    <!-- HEADER -->
+
+    <header class="header">
 
         <div class="brand">
 
             <div class="logo">
-                🛡️
+                🛡
             </div>
 
             <div>
-                <h1>VisionShield</h1>
-                <p>Privacy-preserving browser agent</p>
+
+                <div class="brand-text">
+                    VisionShield
+                </div>
+
+                <div class="brand-subtitle">
+                    Privacy-preserving browser agent
+                </div>
+
             </div>
 
         </div>
 
+
         <div class="status-dot">
-            <span class="dot"></span>
             Ready
         </div>
 
-    </div>
+    </header>
 
 
-    <div class="hero">
+    <!-- MAIN -->
 
-        <div class="hero-label">
-            AI Privacy Shield
-        </div>
-
-        <h2>
-            Browse safely.<br>
-            Keep your data private.
-        </h2>
-
-        <p>
-            VisionShield detects sensitive information on the
-            current webpage before it can leave your device.
-        </p>
-
-        <button class="start-btn" id="startBtn">
-            🚀 &nbsp; Start VisionShield
-        </button>
-
-    </div>
+    <main class="scan-area">
 
 
-    <div class="privacy-card">
+        <!-- SCAN VIEW -->
 
-        <div class="privacy-left">
+        <div id="scanView">
 
-            <div class="shield">
-                🛡️
+            <div class="scan-circle">
+
+                <button
+                    id="startBtn"
+                    class="scan-button"
+                    type="button"
+                >
+                    SCAN<br>&<br>PROTECT
+                </button>
+
             </div>
 
-            <div>
-                <div class="privacy-title">
-                    Vision Shield
+
+            <div class="scan-title">
+                Protect your privacy
+            </div>
+
+            <div class="scan-description">
+                Scan this page for sensitive personal
+                and visual information before it leaves
+                your device.
+            </div>
+
+
+            <!-- SCAN STEPS -->
+
+            <div
+                id="scanSteps"
+                class="scan-steps"
+            >
+
+                <div
+                    id="stepPII"
+                    class="step"
+                >
+
+                    <div class="step-icon">
+                        ✓
+                    </div>
+
+                    <span>
+                        Detecting personal data
+                    </span>
+
                 </div>
 
-                <div class="privacy-sub">
-                    Local PII detection enabled
+
+                <div
+                    id="stepVisual"
+                    class="step"
+                >
+
+                    <div class="step-icon">
+                        ✓
+                    </div>
+
+                    <span>
+                        Analyzing visual content
+                    </span>
+
                 </div>
+
+
+                <div
+                    id="stepProtect"
+                    class="step"
+                >
+
+                    <div class="step-icon">
+                        ✓
+                    </div>
+
+                    <span>
+                        Protecting sensitive content
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="stepVerify"
+                    class="step"
+                >
+
+                    <div class="step-icon">
+                        ✓
+                    </div>
+
+                    <span>
+                        Verifying privacy
+                    </span>
+
+                </div>
+
             </div>
 
         </div>
 
-        <div class="verified" id="privacyStatus">
+
+        <!-- RESULT VIEW -->
+
+        <div
+            id="resultArea"
+            class="result-area"
+        >
+
+            <div class="result-icon">
+                ✓
+            </div>
+
+            <div class="result-title">
+                Privacy Verified
+            </div>
+
+            <div class="result-subtitle">
+                Sensitive information was protected locally.
+            </div>
+
+
+            <div class="metrics">
+
+                <div class="metric">
+
+                    <div
+                        id="detectedCount"
+                        class="metric-value"
+                    >
+                        0
+                    </div>
+
+                    <div class="metric-label">
+                        PII Detected
+                    </div>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <div
+                        id="redactedCount"
+                        class="metric-value"
+                    >
+                        0
+                    </div>
+
+                    <div class="metric-label">
+                        Fields Protected
+                    </div>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <div
+                        id="rawPiiCount"
+                        class="metric-value"
+                    >
+                        0
+                    </div>
+
+                    <div class="metric-label">
+                        Raw PII Sent
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="checks">
+
+                <div class="check">
+
+                    <span>
+                        Personal data
+                    </span>
+
+                    <span class="check-value">
+                        PROTECTED
+                    </span>
+
+                </div>
+
+
+                <div class="check">
+
+                    <span>
+                        Visual data
+                    </span>
+
+                    <span
+                        id="visualStatus"
+                        class="check-value"
+                    >
+                        PROTECTED
+                    </span>
+
+                </div>
+
+
+                <div class="check">
+
+                    <span>
+                        Raw PII sent
+                    </span>
+
+                    <span class="check-value">
+                        0
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="scanAgainBtn"
+                class="scan-button"
+                style="
+                    width:100%;
+                    height:42px;
+                    border-radius:10px;
+                    margin-top:13px;
+                "
+                type="button"
+            >
+                SCAN AGAIN
+            </button>
+
+        </div>
+
+
+        <!-- Hidden elements required by popup.js -->
+
+        <div id="privacyStatus">
             READY
         </div>
 
-    </div>
+        <img
+            id="screenshotPreview"
+            class="hidden"
+        >
 
-
-    <div class="section-title">
-        Privacy Metrics
-    </div>
-
-    <div class="stats">
-
-        <div class="stat">
-            <div class="stat-number" id="detectedCount">
-                0
-            </div>
-
-            <div class="stat-label">
-                PII DETECTED
-            </div>
+        <div id="screenshotStatus">
         </div>
 
-        <div class="stat">
-            <div class="stat-number" id="redactedCount">
-                0
-            </div>
-
-            <div class="stat-label">
-                REDACTED
-            </div>
+        <div id="results">
         </div>
 
-        <div class="stat">
-            <div class="stat-number">
-                0
-            </div>
-
-            <div class="stat-label">
-                RAW UPLOAD
-            </div>
-        </div>
-
-    </div>
-
-    <div class="section-title">
-    Page Screenshot
-</div>
-
-<div class="screenshot-box">
-
-    <div class="screenshot-status"
-         id="screenshotStatus">
-        Waiting for screenshot...
-    </div>
-
-    <img
-        id="screenshotPreview"
-        class="screenshot-preview hidden"
-        alt="Captured page screenshot"
-    >
-
-</div>
-
-    <div class="section-title">
-        Detection Results
-    </div>
-
-    <div class="detection-box" id="results">
-
-        <div class="detection">
-
-            <div class="detection-left">
-
-                <div class="detection-icon">
-                    🔍
-                </div>
-
-                <div class="detection-name">
-                    Waiting for scan...
-                </div>
-
-            </div>
-
-            <div class="detection-status">
-                —
-            </div>
-
-        </div>
-
-    </div>
+    </main>
 
 
     <div class="footer">
-        VisionShield • Privacy by Design • SH 2026
+        VisionShield · SIH 2026 · Privacy by Design
     </div>
 
 </div>
+
 
 <script src="popup.js"></script>
 
 </body>
+
 </html>
